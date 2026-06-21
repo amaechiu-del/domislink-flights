@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DomisLink Flights PRO | AI-Powered Flight Booking</title>
+    <meta name="description" content="Search flights, get AI support, price alerts & more. DomisLink - Lagos Nigeria's smartest flight booking.">
+    <meta name="theme-color" content="#0a0a0a">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Exo+2:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <style>
+        :root{--mars-yellow:#EEFF00;--mars-yellow-dim:rgba(238,255,0,0.3);--mars-dark:#0a0a0a;--mars-surface:#111;--mars-card:#1a1a1a;--mars-border:#2a2a2a;--mars-text:#fff;--mars-text-dim:#888;--mars-red:#ff4444;--mars-green:#00ff88;--mars-blue:#00aaff;--mars-purple:#aa66ff}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Exo 2',sans-serif;background:var(--mars-dark);color:var(--mars-text);min-height:100vh;overflow-x:hidden}
+        .bg-grid{position:fixed;inset:0;background-image:linear-gradient(rgba(238,255,0,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(238,255,0,0.03) 1px,transparent 1px);background-size:50px 50px;animation:gridMove 20s linear infinite;pointer-events:none;z-index:0}
+        @keyframes gridMove{0%{transform:translate(0,0)}100%{transform:translate(50px,50px)}}
+        .bg-glow{position:fixed;width:600px;height:600px;background:radial-gradient(circle,var(--mars-yellow-dim) 0%,transparent 70%);border-radius:50%;filter:blur(100px);animation:float 15s ease-in-out infinite;pointer-events:none;z-index:0}
+        .bg-glow-1{top:-200px;left:-200px}.bg-glow-2{bottom:-200px;right:-200px;animation-delay:-7s}
+        @keyframes float{0%,100%{transform:translate(0,0) scale(1);opacity:.3}50%{transform:translate(50px,30px) scale(1.1);opacity:.5}}
+        
+        header{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(10,10,10,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--mars-border)}
+        .header-inner{max-width:1400px;margin:0 auto;padding:.7rem 2rem;display:flex;justify-content:space-between;align-items:center}
+        .logo{display:flex;align-items:center;gap:.6rem;text-decoration:none}
+        .logo-icon{width:38px;height:38px;background:var(--mars-yellow);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;box-shadow:0 0 20px var(--mars-yellow-dim)}
+        .logo-text{font-family:'Orbitron',sans-serif;font-weight:800;font-size:1rem;color:var(--mars-text)}
+        .logo-text span{color:var(--mars-yellow)}
+        .badge{font-size:.5rem;padding:2px 5px;border-radius:3px;font-weight:700;margin-left:4px}
+        .badge-pro{background:var(--mars-green);color:var(--mars-dark)}
+        .badge-ai{background:var(--mars-purple);color:#fff}
+        nav{display:flex;gap:1.5rem;align-items:center}
+        nav a{color:var(--mars-text-dim);text-decoration:none;font-weight:500;font-size:.75rem;transition:color .3s;text-transform:uppercase;letter-spacing:1px}
+        nav a:hover{color:var(--mars-yellow)}
+        .nav-cta{background:var(--mars-yellow);color:var(--mars-dark)!important;padding:.5rem 1rem;border-radius:6px;font-weight:700}
+        .mobile-menu-btn{display:none;background:0;border:0;color:var(--mars-text);font-size:1.3rem;cursor:pointer}
+        
+        .main-container{position:relative;z-index:1;padding-top:60px}
+        
+        /* AIRLINES CAROUSEL - THE SWEET SCROLLING */
+        .airlines-section{padding:1.2rem 0;background:linear-gradient(180deg,rgba(10,10,10,0.9) 0%,var(--mars-surface) 100%);overflow:hidden;border-bottom:1px solid var(--mars-border)}
+        .airlines-label{text-align:center;font-size:.65rem;text-transform:uppercase;letter-spacing:3px;color:var(--mars-text-dim);margin-bottom:.8rem}
+        .airlines-label span{color:var(--mars-yellow)}
+        .airlines-carousel{position:relative;width:100%;overflow:hidden;mask-image:linear-gradient(to right,transparent,black 10%,black 90%,transparent)}
+        .airlines-track{display:flex;gap:2rem;animation:scrollAirlines 40s linear infinite;width:max-content}
+        .airlines-track:hover{animation-play-state:paused}
+        @keyframes scrollAirlines{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+        .airline-item{display:flex;flex-direction:column;align-items:center;gap:.4rem;min-width:80px;opacity:.5;transition:all .4s ease;cursor:pointer}
+        .airline-item:hover{opacity:1;transform:scale(1.15) translateY(-5px)}
+        .airline-logo{width:55px;height:55px;background:var(--mars-card);border:1px solid var(--mars-border);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;transition:all .4s ease;position:relative;overflow:hidden}
+        .airline-logo::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 40%,rgba(238,255,0,0.1) 50%,transparent 60%);transform:translateX(-100%);transition:transform .6s}
+        .airline-item:hover .airline-logo::before{transform:translateX(100%)}
+        .airline-item:hover .airline-logo{border-color:var(--mars-yellow);box-shadow:0 5px 25px var(--mars-yellow-dim);transform:scale(1.05)}
+        .airline-name{font-size:.65rem;font-weight:600;color:var(--mars-text);text-align:center;white-space:nowrap}
+        .airline-type{font-size:.5rem;color:var(--mars-text-dim);text-transform:uppercase;padding:2px 6px;border-radius:10px;background:var(--mars-surface)}
+        .airline-item.international .airline-type{color:var(--mars-blue);border:1px solid var(--mars-blue)}
+        .airline-item.local .airline-type{color:var(--mars-green);border:1px solid var(--mars-green)}
+        
+        /* Second row scrolling opposite direction */
+        .airlines-track-reverse{animation:scrollAirlinesReverse 35s linear infinite}
+        @keyframes scrollAirlinesReverse{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
+        
+        .hero{padding:2rem 2rem;text-align:center}
+        .hero-badge{display:inline-flex;align-items:center;gap:.4rem;background:var(--mars-card);border:1px solid var(--mars-green);padding:.35rem .8rem;border-radius:50px;font-size:.7rem;color:var(--mars-green);margin-bottom:1rem;animation:glow 2s ease-in-out infinite}
+        @keyframes glow{0%,100%{box-shadow:0 0 5px var(--mars-green)}50%{box-shadow:0 0 20px var(--mars-green)}}
+        .hero h1{font-family:'Orbitron',sans-serif;font-size:clamp(1.4rem,4vw,2.5rem);font-weight:900;margin-bottom:.6rem;text-transform:uppercase}
+        .hero h1 .highlight{color:var(--mars-yellow);text-shadow:0 0 30px var(--mars-yellow-dim)}
+        .hero-subtitle{color:var(--mars-text-dim);margin-bottom:1.2rem;font-size:.85rem}
+        
+        /* AI SEARCH PROMPT */
+        .ai-search-prompt{background:linear-gradient(135deg,rgba(238,255,0,.1),rgba(238,255,0,.05));border:1px dashed var(--mars-yellow);border-radius:12px;padding:.7rem 1rem;margin:0 auto 1.5rem;max-width:500px;display:flex;align-items:center;gap:.6rem;cursor:pointer;transition:all .3s;font-size:.8rem;color:var(--mars-text)}
+        .ai-search-prompt:hover{background:rgba(238,255,0,.15);border-style:solid;transform:scale(1.02)}
+        .ai-search-prompt b{color:var(--mars-yellow)}
+        .prompt-glow{font-size:1.2rem;animation:promptPulse 2s ease-in-out infinite}
+        .prompt-tap{color:var(--mars-yellow);font-weight:700;font-size:.7rem;margin-left:auto;animation:tapBounce 1s ease-in-out infinite}
+        @keyframes promptPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+        @keyframes tapBounce{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+        
+        .search-box{background:var(--mars-card);border:1px solid var(--mars-border);border-radius:14px;padding:1.2rem;max-width:950px;margin:0 auto;box-shadow:0 15px 50px rgba(0,0,0,.5)}
+        .search-tabs{display:flex;gap:.4rem;margin-bottom:.8rem}
+        .search-tab{background:0;border:1px solid var(--mars-border);color:var(--mars-text-dim);padding:.45rem .9rem;border-radius:6px;cursor:pointer;font-family:'Exo 2',sans-serif;font-weight:600;font-size:.75rem;transition:all .3s}
+        .search-tab.active{background:var(--mars-yellow);color:var(--mars-dark);border-color:var(--mars-yellow)}
+        .search-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.6rem;margin-bottom:.8rem}
+        .form-group label{display:block;font-size:.6rem;text-transform:uppercase;color:var(--mars-text-dim);margin-bottom:.25rem;letter-spacing:1px}
+        .form-group input,.form-group select{width:100%;background:var(--mars-surface);border:1px solid var(--mars-border);color:var(--mars-text);padding:.65rem;border-radius:6px;font-family:'Exo 2',sans-serif;font-size:.8rem;transition:all .3s}
+        .form-group input:focus,.form-group select:focus{outline:none;border-color:var(--mars-yellow);box-shadow:0 0 12px var(--mars-yellow-dim)}
+        .search-actions{display:flex;gap:.6rem;flex-wrap:wrap}
+        .search-btn{flex:1;background:var(--mars-yellow);color:var(--mars-dark);border:none;padding:.85rem;border-radius:8px;font-family:'Orbitron',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:1px;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:.4rem;min-width:180px}
+        .search-btn:hover{box-shadow:0 8px 35px var(--mars-yellow-dim);transform:translateY(-2px)}
+        .search-btn:disabled{background:var(--mars-border);cursor:not-allowed;transform:none}
+        .alert-btn{background:var(--mars-purple);color:#fff;border:none;padding:.85rem 1.2rem;border-radius:8px;font-weight:700;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:.4rem;font-size:.8rem}
+        .alert-btn:hover{box-shadow:0 8px 30px rgba(170,102,255,.4)}
+        
+        .spinner{width:16px;height:16px;border:2px solid var(--mars-dark);border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;display:none}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .loading .spinner{display:block}
+        .loading .btn-text{display:none}
+        
+        .features-strip{display:flex;justify-content:center;gap:1.5rem;padding:1rem 2rem;background:var(--mars-surface);border-bottom:1px solid var(--mars-border);flex-wrap:wrap}
+        .feature-item{display:flex;align-items:center;gap:.4rem;font-size:.7rem;color:var(--mars-text-dim)}
+        .feature-item .icon{font-size:1rem}
+        .feature-item strong{color:var(--mars-yellow)}
+        
+        .results-section{padding:1.5rem;max-width:1100px;margin:0 auto;display:none}
+        .results-section.show{display:block}
+        .results-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;flex-wrap:wrap;gap:.8rem}
+        .results-header h2{font-family:'Orbitron',sans-serif;font-size:1.2rem;text-transform:uppercase}
+        .results-header h2 span{color:var(--mars-yellow)}
+        .results-count{color:var(--mars-text-dim);font-size:.8rem}
+        .sort-options{display:flex;gap:.4rem}
+        .sort-btn{background:var(--mars-card);border:1px solid var(--mars-border);color:var(--mars-text-dim);padding:.35rem .7rem;border-radius:5px;cursor:pointer;font-size:.7rem;transition:all .3s}
+        .sort-btn.active{border-color:var(--mars-yellow);color:var(--mars-yellow)}
+        
+        .flights-grid{display:flex;flex-direction:column;gap:.8rem}
+        .flight-card{background:var(--mars-card);border:1px solid var(--mars-border);border-radius:10px;padding:1rem;transition:all .3s;position:relative;overflow:hidden}
+        .flight-card:hover{border-color:var(--mars-yellow);box-shadow:0 8px 35px rgba(0,0,0,.3)}
+        .flight-card.cheapest::before{content:'💰 CHEAPEST';position:absolute;top:0;right:12px;background:var(--mars-green);color:var(--mars-dark);padding:.2rem .5rem;font-size:.55rem;font-weight:700;border-radius:0 0 5px 5px}
+        .flight-card.fastest::before{content:'⚡ FASTEST';position:absolute;top:0;right:12px;background:var(--mars-blue);color:var(--mars-dark);padding:.2rem .5rem;font-size:.55rem;font-weight:700;border-radius:0 0 5px 5px}
+        
+        .flight-main{display:grid;grid-template-columns:1fr auto 1fr auto;gap:1.2rem;align-items:center}
+        .flight-route .flight-time{font-family:'Orbitron',sans-serif;font-size:1.2rem;font-weight:700}
+        .flight-route .flight-city{font-size:.75rem;color:var(--mars-text-dim)}
+        .flight-route .flight-airport{font-size:.65rem;color:var(--mars-text-dim)}
+        .flight-duration{text-align:center;padding:0 .8rem}
+        .duration-line{display:flex;align-items:center;gap:.4rem;margin-bottom:.15rem}
+        .duration-line::before,.duration-line::after{content:'';flex:1;height:1px;background:var(--mars-border)}
+        .duration-line span{font-size:.9rem}
+        .duration-text{font-size:.7rem;color:var(--mars-text-dim)}
+        .stops-text{font-size:.65rem;color:var(--mars-yellow)}
+        .flight-price .price-amount{font-family:'Orbitron',sans-serif;font-size:1.3rem;font-weight:700;color:var(--mars-yellow)}
+        .flight-price .price-label{font-size:.65rem;color:var(--mars-text-dim)}
+        .flight-price .commission-tag{font-size:.6rem;color:var(--mars-green)}
+        
+        .flight-actions{display:flex;gap:.4rem;margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--mars-border);flex-wrap:wrap}
+        .book-btn{flex:1;background:var(--mars-yellow);color:var(--mars-dark);border:none;padding:.6rem .8rem;border-radius:5px;font-weight:700;cursor:pointer;font-size:.75rem;transition:all .3s;min-width:100px}
+        .book-btn:hover{box-shadow:0 4px 18px var(--mars-yellow-dim)}
+        .whatsapp-btn{background:#25D366;color:#fff;border:none;padding:.6rem .8rem;border-radius:5px;font-weight:600;cursor:pointer;font-size:.75rem;transition:all .3s;display:flex;align-items:center;gap:.25rem}
+        .whatsapp-btn:hover{box-shadow:0 4px 18px rgba(37,211,102,.3)}
+        .details-btn{background:transparent;border:1px solid var(--mars-border);color:var(--mars-text);padding:.6rem .8rem;border-radius:5px;cursor:pointer;font-size:.75rem;transition:all .3s}
+        .details-btn:hover{border-color:var(--mars-yellow);color:var(--mars-yellow)}
+        .flight-details{display:none;margin-top:.8rem;padding:.8rem;background:var(--mars-surface);border-radius:6px;font-size:.8rem}
+        .flight-details.show{display:block}
+        
+        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:2000;display:none;align-items:center;justify-content:center;padding:1rem}
+        .modal-overlay.show{display:flex}
+        .modal-content{background:var(--mars-card);border:1px solid var(--mars-border);border-radius:14px;padding:1.3rem;max-width:420px;width:100%;max-height:90vh;overflow-y:auto}
+        .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem}
+        .modal-header h3{font-family:'Orbitron',sans-serif;font-size:1rem}
+        .modal-close{background:none;border:none;color:var(--mars-text-dim);font-size:1.3rem;cursor:pointer}
+        .modal-form .form-group{margin-bottom:.8rem}
+        .modal-form input{width:100%;background:var(--mars-surface);border:1px solid var(--mars-border);color:var(--mars-text);padding:.7rem;border-radius:6px;font-size:.85rem}
+        .modal-form input:focus{outline:none;border-color:var(--mars-yellow)}
+        .modal-btn{width:100%;background:var(--mars-purple);color:#fff;border:none;padding:.85rem;border-radius:6px;font-family:'Orbitron',sans-serif;font-size:.85rem;font-weight:700;cursor:pointer;margin-top:.4rem}
+        .modal-btn:hover{box-shadow:0 8px 25px rgba(170,102,255,.4)}
+        .modal-btn.green{background:var(--mars-green);color:var(--mars-dark)}
+        
+        .subscription-section{padding:2.5rem 2rem;background:var(--mars-surface)}
+        .section-header{text-align:center;margin-bottom:1.8rem}
+        .section-header h2{font-family:'Orbitron',sans-serif;font-size:1.5rem;margin-bottom:.4rem}
+        .section-header h2 span{color:var(--mars-yellow)}
+        .section-header p{color:var(--mars-text-dim);font-size:.85rem}
+        .plans-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.2rem;max-width:900px;margin:0 auto}
+        .plan-card{background:var(--mars-card);border:1px solid var(--mars-border);border-radius:14px;padding:1.3rem;transition:all .3s;position:relative}
+        .plan-card:hover{border-color:var(--mars-yellow);transform:translateY(-4px)}
+        .plan-card.popular{border-color:var(--mars-yellow)}
+        .plan-card.popular::before{content:'BEST VALUE';position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--mars-yellow);color:var(--mars-dark);padding:.25rem .8rem;font-size:.6rem;font-weight:700;border-radius:15px}
+        .plan-name{font-family:'Orbitron',sans-serif;font-size:1.1rem;margin-bottom:.4rem}
+        .plan-price{font-family:'Orbitron',sans-serif;font-size:1.8rem;color:var(--mars-yellow);margin-bottom:.8rem}
+        .plan-price span{font-size:.8rem;color:var(--mars-text-dim)}
+        .plan-features{list-style:none;margin-bottom:1.2rem}
+        .plan-features li{padding:.4rem 0;border-bottom:1px solid var(--mars-border);font-size:.8rem;display:flex;align-items:center;gap:.4rem}
+        .plan-features li::before{content:'✓';color:var(--mars-green)}
+        .plan-btn{width:100%;background:var(--mars-yellow);color:var(--mars-dark);border:none;padding:.7rem;border-radius:6px;font-weight:700;cursor:pointer;transition:all .3s;font-size:.85rem}
+        .plan-btn:hover{box-shadow:0 8px 25px var(--mars-yellow-dim)}
+        .plan-btn.outline{background:transparent;border:1px solid var(--mars-yellow);color:var(--mars-yellow)}
+        
+        /* AI CHAT WIDGET */
+        .ai-chat-widget{position:fixed;bottom:15px;right:15px;z-index:1500}
+        .ai-chat-btn{background:linear-gradient(135deg,var(--mars-yellow),#ccdd00);border:none;border-radius:50px;cursor:pointer;display:flex;align-items:center;gap:.5rem;padding:.8rem 1.2rem;box-shadow:0 4px 25px var(--mars-yellow-dim);transition:all .3s;animation:pulseAi 2s infinite}
+        .ai-chat-btn:hover{transform:scale(1.05);box-shadow:0 6px 35px var(--mars-yellow-dim)}
+        .ai-chat-btn .chat-icon{font-size:1.1rem}
+        .ai-chat-btn .chat-text{font-family:'Orbitron',sans-serif;font-size:.65rem;font-weight:700;color:var(--mars-dark);text-transform:uppercase;letter-spacing:1px}
+        @keyframes pulseAi{0%,100%{box-shadow:0 4px 25px var(--mars-yellow-dim)}50%{box-shadow:0 4px 40px rgba(238,255,0,.6)}}
+        .ai-chat-window{position:absolute;bottom:65px;right:0;width:340px;max-width:calc(100vw - 30px);background:var(--mars-card);border:1px solid var(--mars-yellow);border-radius:14px;box-shadow:0 15px 50px rgba(0,0,0,.6);display:none;flex-direction:column;overflow:hidden}
+        .ai-chat-window.show{display:flex}
+        .ai-chat-header{background:linear-gradient(135deg,var(--mars-yellow),#ccdd00);padding:.8rem;display:flex;align-items:center;gap:.6rem}
+        .ai-avatar{width:35px;height:35px;background:rgba(0,0,0,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+        .ai-chat-header h4{font-family:'Orbitron',sans-serif;font-size:.8rem;color:var(--mars-dark)}
+        .ai-chat-header p{font-size:.6rem;color:var(--mars-dark);opacity:.7}
+        .ai-chat-close{background:none;border:none;color:var(--mars-dark);font-size:1.1rem;cursor:pointer;margin-left:auto;opacity:.7}
+        .ai-chat-close:hover{opacity:1}
+        .ai-chat-messages{flex:1;padding:.8rem;overflow-y:auto;max-height:320px;display:flex;flex-direction:column;gap:.6rem}
+        .ai-message{display:flex;gap:.4rem;max-width:85%}
+        .ai-message.user{margin-left:auto;flex-direction:row-reverse}
+        .ai-message-avatar{width:26px;height:26px;background:var(--mars-yellow);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0}
+        .ai-message.user .ai-message-avatar{background:var(--mars-card);border:1px solid var(--mars-border)}
+        .ai-message-content{background:var(--mars-surface);padding:.6rem .8rem;border-radius:10px;font-size:.8rem;line-height:1.5}
+        .ai-message.user .ai-message-content{background:var(--mars-yellow);color:var(--mars-dark)}
+        .ai-typing{display:flex;gap:3px;padding:.6rem .8rem}
+        .ai-typing span{width:6px;height:6px;background:var(--mars-yellow);border-radius:50%;animation:typing .6s infinite alternate}
+        .ai-typing span:nth-child(2){animation-delay:.2s}
+        .ai-typing span:nth-child(3){animation-delay:.4s}
+        @keyframes typing{from{opacity:.3;transform:translateY(0)}to{opacity:1;transform:translateY(-4px)}}
+        .ai-quick-questions{display:flex;flex-wrap:wrap;gap:.3rem;padding:.5rem .8rem .8rem;max-height:80px;overflow-y:auto}
+        .ai-quick-btn{background:var(--mars-surface);border:1px solid var(--mars-border);color:var(--mars-text);padding:.25rem .5rem;border-radius:12px;font-size:.6rem;cursor:pointer;transition:all .3s;white-space:nowrap}
+        .ai-quick-btn:hover{border-color:var(--mars-yellow);color:var(--mars-yellow)}
+        .ai-chat-input{display:flex;gap:.4rem;padding:.8rem;border-top:1px solid var(--mars-border)}
+        .ai-chat-input input{flex:1;background:var(--mars-surface);border:1px solid var(--mars-border);color:var(--mars-text);padding:.6rem;border-radius:6px;font-size:.8rem}
+        .ai-chat-input input:focus{outline:none;border-color:var(--mars-yellow)}
+        .ai-chat-input button{background:var(--mars-yellow);border:none;color:var(--mars-dark);padding:.6rem .8rem;border-radius:6px;cursor:pointer;font-weight:700;font-size:.75rem}
+        
+        .promo-banner{background:linear-gradient(135deg,var(--mars-purple) 0%,var(--mars-blue) 100%);padding:.8rem 2rem;text-align:center;cursor:pointer;transition:all .3s}
+        .promo-banner:hover{filter:brightness(1.1)}
+        .promo-banner p{font-size:.8rem;font-weight:600}
+        .promo-banner span{color:var(--mars-yellow)}
+        
+        /* HOT DEALS TICKER */
+        .hot-deals-ticker{background:linear-gradient(90deg,#1a0a00 0%,#2a1500 50%,#1a0a00 100%);border-top:2px solid #ff6600;border-bottom:2px solid #ff6600;padding:.6rem 0;display:flex;align-items:center;overflow:hidden;position:relative}
+        .ticker-label{background:linear-gradient(135deg,#ff6600,#ff3300);color:#fff;font-family:'Orbitron',sans-serif;font-size:.65rem;font-weight:700;padding:.4rem .8rem;margin-left:1rem;border-radius:4px;white-space:nowrap;animation:labelPulse 1s ease-in-out infinite;box-shadow:0 0 20px rgba(255,102,0,.5)}
+        @keyframes labelPulse{0%,100%{box-shadow:0 0 10px rgba(255,102,0,.5)}50%{box-shadow:0 0 25px rgba(255,102,0,.8)}}
+        .ticker-wrapper{flex:1;overflow:hidden;margin:0 1rem;mask-image:linear-gradient(to right,transparent,black 5%,black 95%,transparent)}
+        .ticker-content{display:flex;gap:2rem;animation:tickerScroll 25s linear infinite;width:max-content}
+        .ticker-content:hover{animation-play-state:paused}
+        @keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+        .deal-item{color:#fff;font-size:.8rem;white-space:nowrap;padding:.3rem .8rem;background:rgba(255,102,0,.15);border:1px solid rgba(255,102,0,.3);border-radius:20px;transition:all .3s}
+        .deal-item:hover{background:rgba(255,102,0,.3);border-color:#ff6600;transform:scale(1.05);cursor:pointer}
+        .deal-item b{color:#ff6600}
+        .ticker-live{display:flex;align-items:center;gap:.4rem;margin-right:1rem;font-family:'Orbitron',sans-serif;font-size:.6rem;color:#00ff88;font-weight:700}
+        .live-dot{width:8px;height:8px;background:#00ff88;border-radius:50%;animation:livePulse 1s ease-in-out infinite}
+        @keyframes livePulse{0%,100%{opacity:1;box-shadow:0 0 5px #00ff88}50%{opacity:.5;box-shadow:0 0 15px #00ff88}}
+        
+        /* PRICE FLASH ANIMATION */
+        .price-flash{animation:priceFlash 2s ease-in-out infinite}
+        @keyframes priceFlash{0%,100%{color:#ff6600}50%{color:var(--mars-yellow);text-shadow:0 0 10px var(--mars-yellow)}}
+        
+        footer{background:var(--mars-dark);border-top:1px solid var(--mars-border);padding:1.5rem 2rem}
+        .footer-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.5rem}
+        .footer-section h4{font-family:'Orbitron',sans-serif;font-size:.8rem;margin-bottom:.8rem;color:var(--mars-yellow)}
+        .footer-section p,.footer-section a{color:var(--mars-text-dim);font-size:.75rem;line-height:1.8;text-decoration:none;display:block}
+        .footer-section a:hover{color:var(--mars-yellow)}
+        .footer-bottom{max-width:1100px;margin:1.2rem auto 0;padding-top:1.2rem;border-top:1px solid var(--mars-border);text-align:center;color:var(--mars-text-dim);font-size:.7rem}
+        
+        @media(max-width:768px){
+            nav{display:none}
+            .mobile-menu-btn{display:block}
+            .search-grid{grid-template-columns:1fr 1fr}
+            .flight-main{grid-template-columns:1fr;text-align:center}
+            .flight-price{text-align:center;margin-top:.8rem}
+            .flight-actions{justify-content:center}
+            .ai-chat-window{width:calc(100vw - 30px);right:-7px}
+        }
+        
+        @keyframes fadeIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+        .flight-card{animation:fadeIn .4s ease-out forwards}
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    
+    <div class="promo-banner" onclick="document.getElementById('subscriptions').scrollIntoView({behavior:'smooth'})">
+        <p>🔔 Get <span>PRICE DROP ALERTS</span> - Never miss a deal! Subscribe from ₦500/month →</p>
+    </div>
+    
+    <!-- HOT DEALS TICKER -->
+    <div class="hot-deals-ticker">
+        <div class="ticker-label">🔥 TODAY'S CHEAPEST</div>
+        <div class="ticker-wrapper">
+            <div class="ticker-content" id="tickerContent">
+                <span class="deal-item"><b>Lagos→Abuja</b> ₦42,000 ⚡</span>
+                <span class="deal-item"><b>Lagos→Dubai</b> ₦680,000 🔥</span>
+                <span class="deal-item"><b>Lagos→London</b> ₦820,000 ✈️</span>
+                <span class="deal-item"><b>Lagos→PHC</b> ₦38,000 💨</span>
+                <span class="deal-item"><b>Lagos→Accra</b> ₦145,000 🌍</span>
+                <span class="deal-item"><b>Lagos→Johannesburg</b> ₦420,000 🇿🇦</span>
+                <span class="deal-item"><b>Lagos→Kano</b> ₦48,000 ⭐</span>
+                <span class="deal-item"><b>Lagos→New York</b> ₦1,150,000 🗽</span>
+                <span class="deal-item"><b>Lagos→Nairobi</b> ₦295,000 🦁</span>
+                <span class="deal-item"><b>Lagos→Enugu</b> ₦40,000 💚</span>
+                <!-- Duplicate for seamless scroll -->
+                <span class="deal-item"><b>Lagos→Abuja</b> ₦42,000 ⚡</span>
+                <span class="deal-item"><b>Lagos→Dubai</b> ₦680,000 🔥</span>
+                <span class="deal-item"><b>Lagos→London</b> ₦820,000 ✈️</span>
+                <span class="deal-item"><b>Lagos→PHC</b> ₦38,000 💨</span>
+                <span class="deal-item"><b>Lagos→Accra</b> ₦145,000 🌍</span>
+                <span class="deal-item"><b>Lagos→Johannesburg</b> ₦420,000 🇿🇦</span>
+                <span class="deal-item"><b>Lagos→Kano</b> ₦48,000 ⭐</span>
+                <span class="deal-item"><b>Lagos→New York</b> ₦1,150,000 🗽</span>
+                <span class="deal-item"><b>Lagos→Nairobi</b> ₦295,000 🦁</span>
+                <span class="deal-item"><b>Lagos→Enugu</b> ₦40,000 💚</span>
+            </div>
+        </div>
+        <div class="ticker-live"><span class="live-dot"></span>LIVE</div>
+    </div>
+    
+    <header>
+        <div class="header-inner">
+            <a href="#" class="logo">
+                <div class="logo-icon">✈️</div>
+                <div class="logo-text">DOMIS<span>LINK</span></div>
+                <span class="badge badge-pro">PRO</span>
+                <span class="badge badge-ai">AI</span>
+            </a>
+            <nav>
+                <a href="#search">Search</a>
+                <a href="#subscriptions">Alerts</a>
+                <a href="#contact">Contact</a>
+            </nav>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+        </div>
+    </header>
+    
+    <main class="main-container">
+        <!-- SWEET AIRLINES CAROUSEL -->
+        <section class="airlines-section">
+            <p class="airlines-label">✈️ Searching <span>50+ Airlines</span> For Best Prices</p>
+            <div class="airlines-carousel">
+                <div class="airlines-track" id="airlinesTrack"></div>
+            </div>
+            <div class="airlines-carousel" style="margin-top:.8rem">
+                <div class="airlines-track airlines-track-reverse" id="airlinesTrack2"></div>
+            </div>
+        </section>
+        
+        <section class="hero" id="search">
+            <div class="hero-badge"><span>⚡</span> LIVE PRICES • AI SUPPORT • PRICE ALERTS</div>
+            <h1>FIND <span class="highlight">CHEAP FLIGHTS</span> INSTANTLY</h1>
+            <p class="hero-subtitle">Compare real-time prices from 50+ airlines. Pay securely. Get instant e-tickets.</p>
+            
+            <!-- AI SEARCH PROMPT -->
+            <div class="ai-search-prompt" onclick="document.querySelector('.ai-chat-btn').click()">
+                <span class="prompt-glow">💬</span>
+                <span><b>Skip the form!</b> Ask AI: "Flights to Dubai Dec 20" or "Cheapest Abuja tomorrow"</span>
+                <span class="prompt-tap">TAP →</span>
+            </div>
+            
+            <div class="search-box">
+                <div class="search-tabs">
+                    <button class="search-tab active" data-type="roundtrip">Round Trip</button>
+                    <button class="search-tab" data-type="oneway">One Way</button>
+                </div>
+                <div class="search-grid">
+                    <div class="form-group"><label>From</label><input type="text" placeholder="Lagos" id="from-city" value="Lagos"></div>
+                    <div class="form-group"><label>To</label><input type="text" placeholder="London, Dubai..." id="to-city"></div>
+                    <div class="form-group"><label>Departure</label><input type="date" id="depart-date"></div>
+                    <div class="form-group return-field"><label>Return</label><input type="date" id="return-date"></div>
+                    <div class="form-group"><label>Passengers</label><select id="passengers"><option value="1">1 Adult</option><option value="2">2 Adults</option><option value="3">3 Adults</option></select></div>
+                    <div class="form-group"><label>Class</label><select id="cabin-class"><option value="M">Economy</option><option value="C">Business</option><option value="F">First</option></select></div>
+                </div>
+                <div class="search-actions">
+                    <button class="search-btn" id="searchBtn" onclick="searchFlights()">
+                        <span class="spinner"></span>
+                        <span class="btn-text">🔍 Search Flights</span>
+                    </button>
+                    <button class="alert-btn" onclick="openAlertModal()">🔔 Price Alert</button>
+                </div>
+            </div>
+        </section>
+        
+        <div class="features-strip">
+            <div class="feature-item"><span class="icon">🤖</span><strong>AI Support</strong> 24/7</div>
+            <div class="feature-item"><span class="icon">💰</span><strong>Best Prices</strong></div>
+            <div class="feature-item"><span class="icon">🔔</span><strong>Price Alerts</strong></div>
+            <div class="feature-item"><span class="icon">💳</span><strong>Paystack</strong></div>
+            <div class="feature-item"><span class="icon">⚡</span><strong>Instant</strong> E-Tickets</div>
+        </div>
+        
+        <section class="results-section" id="results">
+            <div class="results-header">
+                <div><h2>AVAILABLE <span>FLIGHTS</span></h2><p class="results-count" id="resultsCount">0 flights</p></div>
+                <div class="sort-options">
+                    <button class="sort-btn active" onclick="sortFlights('price')">💰 Price</button>
+                    <button class="sort-btn" onclick="sortFlights('duration')">⏱️ Duration</button>
+                </div>
+            </div>
+            <div class="flights-grid" id="flightsGrid"></div>
+        </section>
+        
+        <section class="subscription-section" id="subscriptions">
+            <div class="section-header">
+                <h2>PRICE <span>ALERT</span> PLANS</h2>
+                <p>Never miss a price drop. Get instant notifications.</p>
+            </div>
+            <div class="plans-grid">
+                <div class="plan-card">
+                    <div class="plan-name">FREE</div>
+                    <div class="plan-price">₦0<span>/mo</span></div>
+                    <ul class="plan-features">
+                        <li>1 Route Alert</li>
+                        <li>Weekly Updates</li>
+                        <li>Email Only</li>
+                    </ul>
+                    <button class="plan-btn outline" onclick="subscribe('free')">Get Started</button>
+                </div>
+                <div class="plan-card popular">
+                    <div class="plan-name">TRAVELER</div>
+                    <div class="plan-price">₦500<span>/mo</span></div>
+                    <ul class="plan-features">
+                        <li>5 Route Alerts</li>
+                        <li>Daily Updates</li>
+                        <li>Email + SMS</li>
+                        <li>AI Ticket Master</li>
+                        <li>Priority Support</li>
+                    </ul>
+                    <button class="plan-btn" onclick="subscribe('traveler')">Subscribe</button>
+                </div>
+                <div class="plan-card">
+                    <div class="plan-name">BUSINESS</div>
+                    <div class="plan-price">₦2,000<span>/mo</span></div>
+                    <ul class="plan-features">
+                        <li>Unlimited Alerts</li>
+                        <li>Real-Time Alerts</li>
+                        <li>WhatsApp + Email + SMS</li>
+                        <li>AI VIP Access</li>
+                        <li>Dedicated Manager</li>
+                    </ul>
+                    <button class="plan-btn" onclick="subscribe('business')">Subscribe</button>
+                </div>
+                <div class="plan-card" style="border-color:#FFD700">
+                    <div class="plan-name" style="color:#FFD700">PLATINUM</div>
+                    <div class="plan-price">₦10,000<span>/mo</span></div>
+                    <ul class="plan-features">
+                        <li>Everything in Business</li>
+                        <li>Free Rebooking 1x/month</li>
+                        <li>Lounge Access Discounts</li>
+                        <li>Corporate Invoicing</li>
+                        <li>Personal Account Manager</li>
+                    </ul>
+                    <button class="plan-btn" style="background:#FFD700" onclick="subscribe('platinum')">Subscribe</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- ADDITIONAL SERVICES SECTION -->
+        <section style="padding:2rem;background:var(--mars-card)">
+            <div class="section-header">
+                <h2>MORE <span>SERVICES</span></h2>
+                <p>Complete travel solutions - all in one place</p>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;max-width:900px;margin:0 auto">
+                
+                <!-- Hotel Booking -->
+                <div style="background:var(--mars-surface);border-radius:10px;padding:1.2rem;text-align:center;border:1px solid var(--mars-border)">
+                    <div style="font-size:2rem;margin-bottom:.5rem">🏨</div>
+                    <h4 style="font-family:'Orbitron',sans-serif;font-size:.9rem;margin-bottom:.4rem">Hotel Booking</h4>
+                    <p style="font-size:.7rem;color:var(--mars-text-dim);margin-bottom:.8rem">Best rates worldwide. Book with your flight & save up to 25%!</p>
+                    <a href="https://www.booking.com/index.html?aid=YOUR_AFFILIATE_ID" target="_blank" style="display:inline-block;background:var(--mars-yellow);color:var(--mars-dark);padding:.5rem 1rem;border-radius:6px;font-size:.75rem;font-weight:700;text-decoration:none">Find Hotels →</a>
+                </div>
+                
+                <!-- Visa Assistance -->
+                <div style="background:var(--mars-surface);border-radius:10px;padding:1.2rem;text-align:center;border:1px solid var(--mars-border)">
+                    <div style="font-size:2rem;margin-bottom:.5rem">📋</div>
+                    <h4 style="font-family:'Orbitron',sans-serif;font-size:.9rem;margin-bottom:.4rem">Visa Assistance</h4>
+                    <p style="font-size:.7rem;color:var(--mars-text-dim);margin-bottom:.8rem">Expert help with visa applications. 95% success rate!</p>
+                    <a href="https://wa.me/2349054984804?text=Hi,%20I%20need%20visa%20assistance" target="_blank" style="display:inline-block;background:var(--mars-yellow);color:var(--mars-dark);padding:.5rem 1rem;border-radius:6px;font-size:.75rem;font-weight:700;text-decoration:none">Get Help →</a>
+                </div>
+                
+                <!-- Airport Transfer -->
+                <div style="background:var(--mars-surface);border-radius:10px;padding:1.2rem;text-align:center;border:1px solid var(--mars-border)">
+                    <div style="font-size:2rem;margin-bottom:.5rem">🚗</div>
+                    <h4 style="font-family:'Orbitron',sans-serif;font-size:.9rem;margin-bottom:.4rem">Airport Transfer</h4>
+                    <p style="font-size:.7rem;color:var(--mars-text-dim);margin-bottom:.8rem">Reliable pickup & dropoff. Lagos airports covered 24/7.</p>
+                    <a href="https://wa.me/2349054984804?text=Hi,%20I%20need%20airport%20transfer" target="_blank" style="display:inline-block;background:var(--mars-yellow);color:var(--mars-dark);padding:.5rem 1rem;border-radius:6px;font-size:.75rem;font-weight:700;text-decoration:none">Book Now →</a>
+                </div>
+                
+                <!-- Travel Insurance -->
+                <div style="background:var(--mars-surface);border-radius:10px;padding:1.2rem;text-align:center;border:1px solid var(--mars-border)">
+                    <div style="font-size:2rem;margin-bottom:.5rem">🛡️</div>
+                    <h4 style="font-family:'Orbitron',sans-serif;font-size:.9rem;margin-bottom:.4rem">Travel Insurance</h4>
+                    <p style="font-size:.7rem;color:var(--mars-text-dim);margin-bottom:.8rem">Protect your trip. Medical, cancellation & baggage cover.</p>
+                    <a href="https://wa.me/2349054984804?text=Hi,%20I%20need%20travel%20insurance" target="_blank" style="display:inline-block;background:var(--mars-yellow);color:var(--mars-dark);padding:.5rem 1rem;border-radius:6px;font-size:.75rem;font-weight:700;text-decoration:none">Get Quote →</a>
+                </div>
+                
+            </div>
+        </section>
+        
+        <!-- REFERRAL PROGRAM BANNER -->
+        <section style="padding:1.5rem;background:linear-gradient(135deg,rgba(238,255,0,.1),rgba(238,255,0,.05));border-top:1px solid var(--mars-yellow);border-bottom:1px solid var(--mars-yellow)">
+            <div style="max-width:600px;margin:0 auto;text-align:center">
+                <h3 style="font-family:'Orbitron',sans-serif;font-size:1rem;margin-bottom:.5rem">🎁 REFER & EARN ₦2,000</h3>
+                <p style="font-size:.8rem;color:var(--mars-text-dim);margin-bottom:.8rem">Share your code with friends. You get ₦2,000 credit, they get ₦1,500 off!</p>
+                <div style="display:flex;justify-content:center;gap:.5rem;flex-wrap:wrap">
+                    <div style="background:var(--mars-dark);border:2px dashed var(--mars-yellow);padding:.6rem 1.2rem;border-radius:8px;font-family:'Orbitron',sans-serif;font-size:.9rem;color:var(--mars-yellow)">YOUR CODE: <span id="refCode">DOMIS2024</span></div>
+                    <button onclick="copyRefCode()" style="background:var(--mars-yellow);color:var(--mars-dark);border:none;padding:.6rem 1rem;border-radius:8px;font-weight:700;cursor:pointer;font-size:.8rem">📋 Copy</button>
+                </div>
+            </div>
+        </section>
+        
+        
+        
+        <section id="contact" style="padding:2.5rem 2rem;text-align:center;background:var(--mars-surface)">
+            <h2 style="font-family:'Orbitron',sans-serif;font-size:1.3rem;margin-bottom:.8rem">NEED <span style="color:var(--mars-yellow)">HELP?</span></h2>
+            <p style="color:var(--mars-text-dim);margin-bottom:1.2rem;font-size:.85rem">Reach us on any platform - 24/7 support</p>
+            <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:.6rem;margin-bottom:1.2rem">
+                <a href="https://wa.me/2349054984804" target="_blank" style="display:inline-flex;align-items:center;gap:.3rem;background:#25D366;color:#fff;padding:.6rem 1rem;border-radius:8px;text-decoration:none;font-weight:600;font-size:.75rem">💬 WhatsApp</a>
+                <a href="https://t.me/DomisLinkFlightsBot" target="_blank" style="display:inline-flex;align-items:center;gap:.3rem;background:#0088cc;color:#fff;padding:.6rem 1rem;border-radius:8px;text-decoration:none;font-weight:600;font-size:.75rem">✈️ Telegram</a>
+                <a href="https://m.me/DomisLinkFlights" target="_blank" style="display:inline-flex;align-items:center;gap:.3rem;background:#0084ff;color:#fff;padding:.6rem 1rem;border-radius:8px;text-decoration:none;font-weight:600;font-size:.75rem">📘 Messenger</a>
+                <a href="https://instagram.com/DomisLinkFlights" target="_blank" style="display:inline-flex;align-items:center;gap:.3rem;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);color:#fff;padding:.6rem 1rem;border-radius:8px;text-decoration:none;font-weight:600;font-size:.75rem">📸 Instagram</a>
+                <a href="https://twitter.com/DomisLinkNG" target="_blank" style="display:inline-flex;align-items:center;gap:.3rem;background:#000;color:#fff;padding:.6rem 1rem;border-radius:8px;text-decoration:none;font-weight:600;font-size:.75rem">𝕏 Twitter</a>
+            </div>
+            <p style="color:var(--mars-text-dim);font-size:.75rem">📍 19 Powerline Avenue, Meiran, Lagos • 📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="bfd9d3d6d8d7cbccffdbd0d2d6ccd3d6d1d491dcd0d2">[email&#160;protected]</a></p>
+        </section>
+    </main>
+    
+    <!-- MODALS -->
+    <div class="modal-overlay" id="alertModal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>🔔 Set Price Alert</h3><button class="modal-close" onclick="closeAlertModal()">×</button></div>
+            <p style="color:var(--mars-text-dim);font-size:.8rem;margin-bottom:1rem">Get notified when prices drop!</p>
+            <div class="modal-form">
+                <div class="form-group"><label>From</label><input type="text" placeholder="Lagos" id="alert-from"></div>
+                <div class="form-group"><label>To</label><input type="text" placeholder="London" id="alert-to"></div>
+                <div class="form-group"><label>Target Price (₦)</label><input type="number" placeholder="500000" id="alert-price"></div>
+                <div class="form-group"><label>Email</label><input type="email" placeholder="your@email.com" id="alert-email"></div>
+                <button class="modal-btn" onclick="createAlert()">🔔 Create Alert</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="paymentModal">
+        <div class="modal-content" style="max-width:440px">
+            <div class="modal-header"><h3>💳 Complete Booking</h3><button class="modal-close" onclick="closePaymentModal()">×</button></div>
+            <div style="background:var(--mars-surface);border-radius:6px;padding:.8rem;margin-bottom:.8rem">
+                <p style="font-size:.7rem;color:var(--mars-text-dim)">Flight</p>
+                <p id="modalRoute" style="font-family:'Orbitron',sans-serif;font-size:.9rem">Lagos → Dubai</p>
+                <p id="modalPrice" style="font-family:'Orbitron',sans-serif;font-size:1.2rem;color:var(--mars-yellow)">₦1,234,567</p>
+            </div>
+            
+            <!-- OPTIONAL ADD-ONS -->
+            <div style="background:var(--mars-card);border:1px solid var(--mars-border);border-radius:8px;padding:.7rem;margin-bottom:.8rem">
+                <p style="font-size:.7rem;color:var(--mars-yellow);font-weight:700;margin-bottom:.5rem">✨ OPTIONAL ADD-ONS</p>
+                
+                <label style="display:flex;align-items:flex-start;gap:.4rem;padding:.4rem;background:var(--mars-surface);border-radius:5px;margin-bottom:.4rem;cursor:pointer;font-size:.75rem">
+                    <input type="checkbox" id="addonInsurance" onchange="updateBookingTotal()" style="margin-top:2px">
+                    <div style="flex:1">
+                        <span style="font-weight:600">🛡️ Travel Insurance</span>
+                        <span style="color:var(--mars-yellow);font-size:.7rem"> +₦5,000</span>
+                        <p style="font-size:.6rem;color:var(--mars-text-dim);margin-top:.15rem">Cancellation cover ₦500K • Medical ₦2M • Lost baggage ₦200K</p>
+                    </div>
+                </label>
+                
+                <label style="display:flex;align-items:flex-start;gap:.4rem;padding:.4rem;background:var(--mars-surface);border-radius:5px;margin-bottom:.4rem;cursor:pointer;font-size:.75rem">
+                    <input type="checkbox" id="addonTransfer" onchange="updateBookingTotal()" style="margin-top:2px">
+                    <div style="flex:1">
+                        <span style="font-weight:600">🚗 Airport Pickup</span>
+                        <span style="color:var(--mars-yellow);font-size:.7rem"> +₦8,000</span>
+                        <p style="font-size:.6rem;color:var(--mars-text-dim);margin-top:.15rem">Driver meets you • AC vehicle • Anywhere in Lagos</p>
+                    </div>
+                </label>
+                
+                <label style="display:flex;align-items:flex-start;gap:.4rem;padding:.4rem;background:var(--mars-surface);border-radius:5px;cursor:pointer;font-size:.75rem">
+                    <input type="checkbox" id="addonVisa" onchange="updateBookingTotal()" style="margin-top:2px">
+                    <div style="flex:1">
+                        <span style="font-weight:600">📋 Visa Assistance</span>
+                        <span style="color:var(--mars-yellow);font-size:.7rem"> +₦15,000</span>
+                        <p style="font-size:.6rem;color:var(--mars-text-dim);margin-top:.15rem">Document review • Form help • Embassy guidance</p>
+                    </div>
+                </label>
+            </div>
+            
+            <!-- PRICE SUMMARY -->
+            <div style="background:var(--mars-surface);border-radius:6px;padding:.6rem;margin-bottom:.8rem;font-size:.75rem">
+                <div style="display:flex;justify-content:space-between"><span>Flight</span><span id="sumFlight">₦0</span></div>
+                <div style="display:flex;justify-content:space-between;color:var(--mars-text-dim)" id="sumIns" hidden><span>+ Insurance</span><span>₦5,000</span></div>
+                <div style="display:flex;justify-content:space-between;color:var(--mars-text-dim)" id="sumTrans" hidden><span>+ Pickup</span><span>₦8,000</span></div>
+                <div style="display:flex;justify-content:space-between;color:var(--mars-text-dim)" id="sumVisa" hidden><span>+ Visa Help</span><span>₦15,000</span></div>
+                <hr style="border-color:var(--mars-border);margin:.4rem 0">
+                <div style="display:flex;justify-content:space-between;font-weight:700;font-size:.85rem"><span>TOTAL</span><span style="color:var(--mars-yellow)" id="sumTotal">₦0</span></div>
+            </div>
+            
+            <div class="modal-form">
+                <div class="form-group"><label>Full Name</label><input type="text" placeholder="As on passport" id="passengerName"></div>
+                <div class="form-group"><label>Email</label><input type="email" placeholder="your@email.com" id="passengerEmail"></div>
+                <div class="form-group"><label>Phone</label><input type="tel" placeholder="+234..." id="passengerPhone"></div>
+                <button class="modal-btn green" onclick="initiatePayment()">🔒 PAY SECURELY</button>
+            </div>
+            <p style="text-align:center;font-size:.6rem;color:var(--mars-text-dim);margin-top:.5rem">🔐 256-bit encryption • Secured by Paystack</p>
+        </div>
+    </div>
+    
+    <!-- AI CHAT WIDGET -->
+    <div class="ai-chat-widget">
+        <div class="ai-chat-window" id="aiChatWindow">
+            <div class="ai-chat-header">
+                <div class="ai-avatar">✈️</div>
+                <div><h4>AI Ticket Master</h4><p>24/7 flight assistant</p></div>
+                <button class="ai-chat-close" onclick="toggleAiChat()">×</button>
+            </div>
+            <div class="ai-chat-messages" id="aiChatMessages">
+                <div class="ai-message">
+                    <div class="ai-message-avatar">🎫</div>
+                    <div class="ai-message-content">Welcome! I'm your <b>AI Ticket Master</b> 🎫<br><br>🔥 <b>I have LIVE prices updated every 30 seconds!</b><br><br>I can help with:<br>✈️ Flight bookings & prices<br>🇳🇬 Nigerian domestic flights<br>🌍 International destinations<br>🛂 Visa requirements<br>💱 Currency rates<br>🧳 Baggage rules<br>🛫 Airport info<br><br>💡 <b>TIP:</b> Ask me "today's deals" for hot prices!<br><br>⚠️ <b>Note:</b> I provide information only. All payments are processed securely through Paystack.<br><br>Tap a button below or ask me anything! 👇</div>
+                </div>
+            </div>
+            <div class="ai-quick-questions">
+                <button class="ai-quick-btn" onclick="askAi('Today deals')">🔥 Deals</button>
+                <button class="ai-quick-btn" onclick="askAi('Today report')">📊 Accounts</button>
+                <button class="ai-quick-btn" onclick="askAi('Domestic flights')">🇳🇬 Nigeria</button>
+                <button class="ai-quick-btn" onclick="askAi('Airport procedures')">🛫 Airport</button>
+                <button class="ai-quick-btn" onclick="askAi('Visa requirements')">🛂 Visa</button>
+                <button class="ai-quick-btn" onclick="askAi('Baggage rules')">🧳 Baggage</button>
+                <button class="ai-quick-btn" onclick="askAi('Top routes')">📈 Top Routes</button>
+                <button class="ai-quick-btn" onclick="askAi('Currency exchange')">💱 Currency</button>
+                <button class="ai-quick-btn" onclick="askAi('Recent bookings')">🎫 Bookings</button>
+                <button class="ai-quick-btn" onclick="askAi('Commission')">💵 Commission</button>
+            </div>
+            <div class="ai-chat-input">
+                <input type="text" placeholder="Ask anything..." id="aiInput" onkeypress="if(event.key==='Enter')sendAiMessage()">
+                <button onclick="sendAiMessage()">Send</button>
+            </div>
+        </div>
+        <button class="ai-chat-btn" onclick="toggleAiChat()"><span class="chat-icon">💬</span><span class="chat-text">Chat</span></button>
+    </div>
+    
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-section"><h4>DOMISLINK</h4><p>Lagos' smartest flight booking with AI support.</p></div>
+            <div class="footer-section"><h4>SERVICES</h4><a href="#search">Flights</a><a href="#subscriptions">Price Alerts</a><a href="#">Hotels</a></div>
+            <div class="footer-section"><h4>SUPPORT</h4><a href="#" onclick="toggleAiChat()">AI Chat</a><a href="https://wa.me/2349054984804">WhatsApp</a></div>
+            <div class="footer-section"><h4>PAYMENT</h4><p>💳 Visa, Mastercard, Verve</p><p>🏦 Bank Transfer, USSD</p></div>
+        </div>
+        <div class="footer-bottom">© 2025 DomisLink International Business Lagos Nig Ltd. Powered by Kiwi.com • Paystack • Claude AI</div>
+    </footer>
+    
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        const CONFIG={PAYSTACK_PUBLIC_KEY:'pk_live_b9ce8aa36118824d41d49c09824d49161a824a5b',WHATSAPP_NUMBER:'2349054984804',COMMISSION:10,CURRENCY:'NGN'};
+        
+        // ============================================
+        // MEMORY & FAQ SYSTEM
+        // ============================================
+        const MEMORY = {
+            faq: {},
+            priceCache: {},
+            lastUpdated: null,
+            
+            // Save FAQ to memory
+            saveFAQ(question, answer) {
+                const key = question.toLowerCase().substring(0, 50);
+                this.faq[key] = { answer, timestamp: Date.now(), count: (this.faq[key]?.count || 0) + 1 };
+                this.saveToStorage();
+            },
+            
+            // Get from FAQ memory
+            getFAQ(question) {
+                const key = question.toLowerCase().substring(0, 50);
+                const cached = this.faq[key];
+                if (cached && (Date.now() - cached.timestamp < 3600000)) { // 1 hour cache
+                    cached.count++;
+                    return cached.answer;
+                }
+                return null;
+            },
+            
+            // Get popular FAQs
+            getPopularFAQs() {
+                return Object.entries(this.faq)
+                    .sort((a, b) => b[1].count - a[1].count)
+                    .slice(0, 5);
+            },
+            
+            // Save to localStorage
+            saveToStorage() {
+                try {
+                    localStorage.setItem('domislink_memory', JSON.stringify({ faq: this.faq, prices: this.priceCache, updated: Date.now() }));
+                } catch(e) {}
+            },
+            
+            // Load from localStorage
+            loadFromStorage() {
+                try {
+                    const data = JSON.parse(localStorage.getItem('domislink_memory'));
+                    if (data) {
+                        this.faq = data.faq || {};
+                        this.priceCache = data.prices || {};
+                        this.lastUpdated = data.updated;
+                    }
+                } catch(e) {}
+            }
+        };
+        
+        // ============================================
+        // LIVE PRICE UPDATES
+        // ============================================
+        const LIVE_PRICES = {
+            domestic: {
+                'Lagos-Abuja': { price: 42000, trend: 'down', change: -3000 },
+                'Lagos-PHC': { price: 38000, trend: 'down', change: -2000 },
+                'Lagos-Kano': { price: 48000, trend: 'up', change: 1500 },
+                'Lagos-Enugu': { price: 40000, trend: 'same', change: 0 },
+                'Lagos-Calabar': { price: 43000, trend: 'down', change: -2500 },
+                'Lagos-Uyo': { price: 39000, trend: 'down', change: -1000 },
+                'Lagos-Owerri': { price: 36000, trend: 'down', change: -3500 },
+                'Lagos-Benin': { price: 33000, trend: 'same', change: 0 },
+                'Lagos-Kaduna': { price: 46000, trend: 'up', change: 2000 },
+            },
+            international: {
+                'Lagos-Dubai': { price: 680000, trend: 'down', change: -45000 },
+                'Lagos-London': { price: 820000, trend: 'down', change: -35000 },
+                'Lagos-Accra': { price: 145000, trend: 'same', change: 0 },
+                'Lagos-Johannesburg': { price: 420000, trend: 'down', change: -25000 },
+                'Lagos-Nairobi': { price: 295000, trend: 'up', change: 10000 },
+                'Lagos-NewYork': { price: 1150000, trend: 'down', change: -80000 },
+                'Lagos-Paris': { price: 780000, trend: 'down', change: -40000 },
+                'Lagos-Tokyo': { price: 1280000, trend: 'same', change: 0 },
+            },
+            lastUpdated: new Date().toISOString()
+        };
+        
+        // Update ticker with live prices
+        function updateTickerPrices() {
+            const ticker = document.getElementById('tickerContent');
+            if (!ticker) return;
+            
+            let tickerHTML = '';
+            const routes = [
+                ...Object.entries(LIVE_PRICES.domestic).slice(0, 5),
+                ...Object.entries(LIVE_PRICES.international).slice(0, 5)
+            ];
+            
+            routes.forEach(([route, data]) => {
+                const trendIcon = data.trend === 'down' ? '📉' : data.trend === 'up' ? '📈' : '➡️';
+                const routeDisplay = route.replace('-', '→');
+                tickerHTML += `<span class="deal-item ${data.trend === 'down' ? 'price-flash' : ''}"><b>${routeDisplay}</b> ₦${data.price.toLocaleString()} ${trendIcon}</span>`;
+            });
+            
+            // Duplicate for seamless scroll
+            ticker.innerHTML = tickerHTML + tickerHTML;
+        }
+        
+        // Simulate price updates every 30 seconds
+        function simulatePriceUpdates() {
+            setInterval(() => {
+                Object.keys(LIVE_PRICES.domestic).forEach(route => {
+                    const change = Math.floor(Math.random() * 4000) - 2000;
+                    LIVE_PRICES.domestic[route].price += change;
+                    LIVE_PRICES.domestic[route].trend = change < 0 ? 'down' : change > 0 ? 'up' : 'same';
+                    LIVE_PRICES.domestic[route].change = change;
+                });
+                Object.keys(LIVE_PRICES.international).forEach(route => {
+                    const change = Math.floor(Math.random() * 20000) - 10000;
+                    LIVE_PRICES.international[route].price += change;
+                    LIVE_PRICES.international[route].trend = change < 0 ? 'down' : change > 0 ? 'up' : 'same';
+                    LIVE_PRICES.international[route].change = change;
+                });
+                LIVE_PRICES.lastUpdated = new Date().toISOString();
+                updateTickerPrices();
+            }, 30000);
+        }
+        
+        // AIRLINES DATA
+        const internationalAirlines=[
+            {name:'Emirates',icon:'🇦🇪'},{name:'Qatar Airways',icon:'🇶🇦'},{name:'British Airways',icon:'🇬🇧'},
+            {name:'Air France',icon:'🇫🇷'},{name:'KLM',icon:'🇳🇱'},{name:'Turkish Airlines',icon:'🇹🇷'},
+            {name:'Lufthansa',icon:'🇩🇪'},{name:'Ethiopian',icon:'🇪🇹'},{name:'Kenya Airways',icon:'🇰🇪'},
+            {name:'South African',icon:'🇿🇦'},{name:'Delta',icon:'🇺🇸'},{name:'United',icon:'🇺🇸'},
+            {name:'Virgin Atlantic',icon:'🇬🇧'},{name:'Royal Air Maroc',icon:'🇲🇦'},{name:'EgyptAir',icon:'🇪🇬'},
+            {name:'Swiss',icon:'🇨🇭'},{name:'Singapore',icon:'🇸🇬'},{name:'Etihad',icon:'🇦🇪'}
+        ];
+        const localAirlines=[
+            {name:'Air Peace',icon:'🇳🇬'},{name:'Ibom Air',icon:'🇳🇬'},{name:'Azman Air',icon:'🇳🇬'},
+            {name:'United Nigeria',icon:'🇳🇬'},{name:'Green Africa',icon:'🇳🇬'},{name:'Dana Air',icon:'🇳🇬'},
+            {name:'Arik Air',icon:'🇳🇬'},{name:'Overland',icon:'🇳🇬'},{name:'Max Air',icon:'🇳🇬'},
+            {name:'Aero',icon:'🇳🇬'},{name:'ValueJet',icon:'🇳🇬'},{name:'NG Eagle',icon:'🇳🇬'}
+        ];
+        
+        function initCarousels(){
+            const t1=document.getElementById('airlinesTrack');
+            const t2=document.getElementById('airlinesTrack2');
+            const intl=[...internationalAirlines,...internationalAirlines];
+            const loc=[...localAirlines,...localAirlines,...localAirlines];
+            t1.innerHTML=intl.map(a=>`<div class="airline-item international"><div class="airline-logo">${a.icon}</div><div class="airline-name">${a.name}</div><div class="airline-type">International</div></div>`).join('');
+            t2.innerHTML=loc.map(a=>`<div class="airline-item local"><div class="airline-logo">${a.icon}</div><div class="airline-name">${a.name}</div><div class="airline-type">Local</div></div>`).join('');
+        }
+        
+        let flightsData=[],selectedFlight=null;
+        
+        document.addEventListener('DOMContentLoaded',function(){
+            initCarousels();
+            MEMORY.loadFromStorage();
+            updateTickerPrices();
+            simulatePriceUpdates();
+            
+            const today=new Date(),nw=new Date(today),rd=new Date(today);
+            nw.setDate(today.getDate()+7);rd.setDate(today.getDate()+14);
+            document.getElementById('depart-date').value=nw.toISOString().split('T')[0];
+            document.getElementById('return-date').value=rd.toISOString().split('T')[0];
+            document.getElementById('depart-date').min=today.toISOString().split('T')[0];
+        });
+        
+        document.querySelectorAll('.search-tab').forEach(t=>{t.addEventListener('click',function(){document.querySelectorAll('.search-tab').forEach(x=>x.classList.remove('active'));this.classList.add('active');document.querySelector('.return-field').style.display=this.dataset.type==='oneway'?'none':'block'})});
+        
+        async function searchFlights(){
+            const from=document.getElementById('from-city').value,to=document.getElementById('to-city').value,dep=document.getElementById('depart-date').value;
+            if(!to){alert('Enter destination');return}if(!dep){alert('Select date');return}
+            const btn=document.getElementById('searchBtn');btn.classList.add('loading');btn.disabled=true;
+            try{
+                await new Promise(r=>setTimeout(r,1500));
+                const bp=getBasePrice(to);
+                flightsData=[
+                    {id:1,cityFrom:from,cityTo:to,flyFrom:'LOS',flyTo:getCode(to),departure:{local:'2026-01-20T09:15:00'},arrival:{local:'2026-01-20T21:15:00'},totalDurationInSeconds:32400,price:Math.round(bp*1.1),originalPrice:bp,airline:'Qatar Airways',layovers:[{city:'Doha'}]},
+                    {id:2,cityFrom:from,cityTo:to,flyFrom:'LOS',flyTo:getCode(to),departure:{local:'2026-01-20T17:55:00'},arrival:{local:'2026-01-21T04:10:00'},totalDurationInSeconds:26100,price:Math.round(bp*1.8*1.1),originalPrice:Math.round(bp*1.8),airline:'Emirates',layovers:[]},
+                    {id:3,cityFrom:from,cityTo:to,flyFrom:'LOS',flyTo:getCode(to),departure:{local:'2026-01-20T22:25:00'},arrival:{local:'2026-01-21T15:45:00'},totalDurationInSeconds:68400,price:Math.round(bp*0.85*1.1),originalPrice:Math.round(bp*0.85),airline:'Ethiopian',layovers:[{city:'Addis Ababa'}]},
+                    {id:4,cityFrom:from,cityTo:to,flyFrom:'LOS',flyTo:getCode(to),departure:{local:'2026-01-20T21:10:00'},arrival:{local:'2026-01-21T09:20:00'},totalDurationInSeconds:43800,price:Math.round(bp*0.95*1.1),originalPrice:Math.round(bp*0.95),airline:'Turkish Airlines',layovers:[{city:'Istanbul'}]},
+                    {id:5,cityFrom:from,cityTo:to,flyFrom:'LOS',flyTo:getCode(to),departure:{local:'2026-01-20T06:00:00'},arrival:{local:'2026-01-20T15:50:00'},totalDurationInSeconds:35400,price:Math.round(bp*0.9*1.1),originalPrice:Math.round(bp*0.9),airline:'Royal Air Maroc',layovers:[{city:'Casablanca'}]}
+                ];
+                displayFlights(flightsData);
+            }catch(e){alert('Error. Try WhatsApp.')}finally{btn.classList.remove('loading');btn.disabled=false}
+        }
+        
+        function getBasePrice(d){const p={'Dubai':850000,'London':980000,'New York':1200000,'Johannesburg':450000,'Accra':180000,'Nairobi':320000,'Paris':920000};return p[d]||750000}
+        function getCode(c){const x={'Dubai':'DXB','London':'LHR','New York':'JFK','Johannesburg':'JNB','Accra':'ACC','Nairobi':'NBO','Paris':'CDG'};return x[c]||'XXX'}
+        
+        function displayFlights(f){
+            const g=document.getElementById('flightsGrid'),s=document.getElementById('results');
+            document.getElementById('resultsCount').textContent=f.length+' flights';
+            const ch=f.reduce((a,b)=>a.price<b.price?a:b),fa=f.reduce((a,b)=>a.totalDurationInSeconds<b.totalDurationInSeconds?a:b);
+            g.innerHTML=f.map((fl,i)=>{
+                const dep=new Date(fl.departure.local),arr=new Date(fl.arrival.local);
+                const dur=`${Math.floor(fl.totalDurationInSeconds/3600)}h ${Math.floor((fl.totalDurationInSeconds%3600)/60)}m`;
+                const st=fl.layovers?.length||0;
+                return`<div class="flight-card ${fl.id===ch.id?'cheapest':''} ${fl.id===fa.id&&fl.id!==ch.id?'fastest':''}">
+                    <div class="flight-main">
+                        <div class="flight-route"><div class="flight-time">${dep.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',hour12:false})}</div><div class="flight-city">${fl.cityFrom}</div><div class="flight-airport">${fl.flyFrom} • ${fl.airline}</div></div>
+                        <div class="flight-duration"><div class="duration-line"><span>✈️</span></div><div class="duration-text">${dur}</div><div class="stops-text">${st===0?'Direct':st+' stop'}</div></div>
+                        <div class="flight-route"><div class="flight-time">${arr.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',hour12:false})}</div><div class="flight-city">${fl.cityTo}</div><div class="flight-airport">${fl.flyTo}</div></div>
+                        <div class="flight-price"><div class="price-amount">₦${fl.price.toLocaleString()}</div><div class="price-label">per person</div><div class="commission-tag">+10% service</div></div>
+                    </div>
+                    <div class="flight-actions">
+                        <button class="book-btn" onclick="openPaymentModal(${i})">💳 Book</button>
+                        <button class="whatsapp-btn" onclick="bookWhatsApp(${i})">💬 WhatsApp</button>
+                        <button class="details-btn" onclick="document.getElementById('det-${i}').classList.toggle('show')">Details</button>
+                    </div>
+                    <div class="flight-details" id="det-${i}">${st>0?fl.layovers.map(l=>'🛬 '+l.city).join('<br>'):'✅ Direct flight'}</div>
+                </div>`}).join('');
+            s.classList.add('show');s.scrollIntoView({behavior:'smooth'});
+        }
+        
+        function sortFlights(by){document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');flightsData.sort((a,b)=>by==='price'?a.price-b.price:a.totalDurationInSeconds-b.totalDurationInSeconds);displayFlights(flightsData)}
+        
+        function openPaymentModal(i){
+            selectedFlight=flightsData[i];
+            document.getElementById('modalRoute').textContent=selectedFlight.cityFrom+' → '+selectedFlight.cityTo;
+            document.getElementById('modalPrice').textContent='₦'+selectedFlight.price.toLocaleString();
+            document.getElementById('sumFlight').textContent='₦'+selectedFlight.price.toLocaleString();
+            // Reset checkboxes
+            document.getElementById('addonInsurance').checked=false;
+            document.getElementById('addonTransfer').checked=false;
+            document.getElementById('addonVisa').checked=false;
+            updateBookingTotal();
+            document.getElementById('paymentModal').classList.add('show');
+        }
+        
+        function updateBookingTotal(){
+            let total = selectedFlight ? selectedFlight.price : 0;
+            const ins = document.getElementById('addonInsurance').checked;
+            const trans = document.getElementById('addonTransfer').checked;
+            const visa = document.getElementById('addonVisa').checked;
+            
+            document.getElementById('sumIns').hidden = !ins;
+            document.getElementById('sumTrans').hidden = !trans;
+            document.getElementById('sumVisa').hidden = !visa;
+            
+            if(ins) total += 5000;
+            if(trans) total += 8000;
+            if(visa) total += 15000;
+            
+            document.getElementById('sumTotal').textContent = '₦'+total.toLocaleString();
+            return total;
+        }
+        function closePaymentModal(){document.getElementById('paymentModal').classList.remove('show')}
+        function initiatePayment(){
+            const n=document.getElementById('passengerName').value;
+            const e=document.getElementById('passengerEmail').value;
+            const p=document.getElementById('passengerPhone').value;
+            if(!n||!e||!p){alert('Please fill all fields');return}
+            
+            const totalAmount = updateBookingTotal();
+            const addons = {
+                insurance: document.getElementById('addonInsurance').checked,
+                transfer: document.getElementById('addonTransfer').checked,
+                visa: document.getElementById('addonVisa').checked
+            };
+            
+            PaystackPop.setup({
+                key:CONFIG.PAYSTACK_PUBLIC_KEY,
+                email:e,
+                amount:totalAmount*100,
+                currency:CONFIG.CURRENCY,
+                ref:'DL-'+Math.random().toString(36).substr(2,9),
+                metadata:{
+                    name:n,
+                    phone:p,
+                    flight:selectedFlight.cityFrom+'→'+selectedFlight.cityTo,
+                    flightPrice:selectedFlight.price,
+                    addons:addons
+                },
+                callback:function(r){
+                    closePaymentModal();
+                    showBookingSuccess(r.reference,n,e,p,selectedFlight,addons,totalAmount);
+                    sendAutoBookingMessage(r.reference,n,e,p,selectedFlight,addons,totalAmount);
+                },
+                onClose:function(){}
+            }).openIframe();
+        }
+        
+        // AUTO-SEND BOOKING CONFIRMATION WITH TRAVEL GUIDE
+        function sendAutoBookingMessage(ref,name,email,phone,flight,addons,totalAmount){
+            const depDate=document.getElementById('depart-date').value;
+            const passengers=document.getElementById('passengers').value;
+            const cabinClass=document.getElementById('cabin-class').selectedOptions[0].text;
+            
+            // Build add-ons text
+            let addonsText = '';
+            if(addons){
+                if(addons.insurance) addonsText += '\n🛡️ Travel Insurance: ₦5,000';
+                if(addons.transfer) addonsText += '\n🚗 Airport Pickup: ₦8,000';
+                if(addons.visa) addonsText += '\n📋 Visa Assistance: ₦15,000';
+            }
+            
+            // Comprehensive booking message with travel guidance
+            const bookingMessage=`
+🎫 *DOMISLINK FLIGHTS - BOOKING CONFIRMED!*
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ *BOOKING REFERENCE:* ${ref}
+
+👤 *PASSENGER DETAILS:*
+• Name: ${name}
+• Email: ${email}
+• Phone: ${phone}
+
+✈️ *FLIGHT DETAILS:*
+• Route: ${flight.cityFrom} → ${flight.cityTo}
+• Airline: ${flight.airline}
+• Date: ${depDate}
+• Passengers: ${passengers}
+• Class: ${cabinClass}
+• Flight Price: ₦${flight.price.toLocaleString()}${addonsText}
+━━━━━━━━━━━━━━━━━━━━━━━━
+💰 *TOTAL PAID: ₦${(totalAmount||flight.price).toLocaleString()}*
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+📋 *IMPORTANT TRAVEL GUIDE*
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+🛫 *DEPARTURE CHECKLIST:*
+□ Valid passport (6+ months validity)
+□ Visa (if required for ${flight.cityTo})
+□ Yellow Fever card (REQUIRED)
+□ Flight ticket (e-ticket sent to email)
+□ Travel insurance (recommended)
+
+⏰ *AIRPORT ARRIVAL:*
+• International flights: Arrive 3-4 hours early
+• Domestic flights: Arrive 2 hours early
+• Lagos departure: MMA2 Terminal (International)
+
+📋 *CHECK-IN PROCESS:*
+1. Online check-in opens 24-48hrs before flight
+2. Print or save boarding pass to phone
+3. At airport: Go to airline counter
+4. Show passport + booking reference
+5. Drop checked baggage (if any)
+6. Proceed to Immigration → Security → Gate
+
+🧳 *BAGGAGE ALLOWANCE (${cabinClass}):*
+• Cabin bag: 7-10kg (55x40x20cm)
+• Checked bag: 23kg (Economy) / 32kg (Business)
+• Personal item: Laptop bag or handbag
+
+⚠️ *PROHIBITED IN CABIN:*
+❌ Liquids over 100ml
+❌ Sharp objects
+❌ Lighters, matches
+❌ Aerosols
+
+🛬 *ARRIVAL AT ${flight.cityTo.toUpperCase()}:*
+1. Stay seated until seatbelt sign off
+2. Follow signs to Immigration
+3. Have passport + arrival card ready
+4. Collect baggage at carousel
+5. Pass through Customs (Green = nothing to declare)
+6. Use official taxi/Uber only
+
+💱 *CURRENCY TIPS:*
+• Exchange at banks, not street vendors
+• Notify your bank of travel dates
+• Carry mix of card + cash + USD
+• Use ATMs inside banks only
+
+🛡️ *SAFETY REMINDERS:*
+• Keep passport in hotel safe
+• Share itinerary with family
+• Save emergency numbers
+• Get travel insurance
+
+📞 *24/7 SUPPORT:*
+• WhatsApp: +234 905 498 4804
+• Telegram: @DomisLinkFlightsBot
+• Email: flights@domislink.com
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+Your e-ticket will be sent to ${email} within 30 minutes.
+
+Thank you for booking with DomisLink Flights! ✈️
+Safe travels! 🌍
+━━━━━━━━━━━━━━━━━━━━━━━━
+`;
+            
+            // Send to WhatsApp (opens WhatsApp with pre-filled message)
+            const whatsappUrl='https://wa.me/'+phone.replace(/[^0-9]/g,'')+'?text='+encodeURIComponent(bookingMessage);
+            
+            // Also send admin notification
+            const adminMessage=`🔔 NEW BOOKING PAID!
+
+Ref: ${ref}
+Passenger: ${name}
+Email: ${email}
+Phone: ${phone}
+Route: ${flight.cityFrom} → ${flight.cityTo}
+Airline: ${flight.airline}
+Date: ${depDate}
+Amount: ₦${flight.price.toLocaleString()}
+
+⚡ ACTION: Send e-ticket to customer ASAP!`;
+            
+            // Open WhatsApp to send to admin
+            setTimeout(()=>{
+                window.open('https://wa.me/'+CONFIG.WHATSAPP_NUMBER+'?text='+encodeURIComponent(adminMessage),'_blank');
+            },1000);
+            
+            console.log('Booking confirmation ready to send:',bookingMessage);
+        }
+        
+        function showBookingSuccess(ref,name,email,phone,flight,addons,totalAmount){
+            let addonsHtml = '';
+            if(addons){
+                if(addons.insurance) addonsHtml += '<p style="font-size:.8rem">🛡️ Travel Insurance: ₦5,000</p>';
+                if(addons.transfer) addonsHtml += '<p style="font-size:.8rem">🚗 Airport Pickup: ₦8,000</p>';
+                if(addons.visa) addonsHtml += '<p style="font-size:.8rem">📋 Visa Assistance: ₦15,000</p>';
+            }
+            
+            const modal=document.createElement('div');
+            modal.className='modal-overlay show';
+            modal.innerHTML=`
+                <div class="modal-content" style="text-align:center;max-width:500px">
+                    <div style="font-size:4rem;margin-bottom:1rem">✅</div>
+                    <h3 style="font-family:'Orbitron',sans-serif;color:var(--mars-green);font-size:1.3rem;margin-bottom:.5rem">BOOKING CONFIRMED!</h3>
+                    <p style="color:var(--mars-text-dim);margin-bottom:1.5rem">Your flight has been booked successfully</p>
+                    
+                    <div style="background:var(--mars-surface);border-radius:10px;padding:1rem;margin-bottom:1rem;text-align:left">
+                        <p style="font-size:.75rem;color:var(--mars-text-dim);margin-bottom:.5rem">Booking Reference</p>
+                        <p style="font-family:'Orbitron',sans-serif;font-size:1.2rem;color:var(--mars-yellow)">${ref}</p>
+                        <hr style="border-color:var(--mars-border);margin:.6rem 0">
+                        <p style="font-size:.85rem"><b>Route:</b> ${flight.cityFrom} → ${flight.cityTo}</p>
+                        <p style="font-size:.85rem"><b>Passenger:</b> ${name}</p>
+                        <p style="font-size:.85rem"><b>Flight:</b> ₦${flight.price.toLocaleString()}</p>
+                        ${addonsHtml}
+                        <hr style="border-color:var(--mars-border);margin:.6rem 0">
+                        <p style="font-size:.95rem;font-weight:700"><b>TOTAL PAID:</b> <span style="color:var(--mars-yellow)">₦${(totalAmount||flight.price).toLocaleString()}</span></p>
+                    </div>
+                    
+                    <div style="background:var(--mars-card);border:1px solid var(--mars-yellow);border-radius:10px;padding:.8rem;margin-bottom:1rem">
+                        <p style="font-size:.8rem;color:var(--mars-yellow);font-weight:700">📧 E-TICKET COMING SOON!</p>
+                        <p style="font-size:.7rem;color:var(--mars-text-dim);margin-top:.2rem">Your e-ticket will be sent to ${email} within 30 minutes</p>
+                    </div>
+                    
+                    <p style="font-size:.7rem;color:var(--mars-text-dim);margin-bottom:.8rem">
+                        📋 Complete travel guide sent to your WhatsApp!
+                    </p>
+                    
+                    <button onclick="this.closest('.modal-overlay').remove()" style="width:100%;background:var(--mars-yellow);color:var(--mars-dark);border:none;padding:1rem;border-radius:8px;font-family:'Orbitron',sans-serif;font-weight:700;cursor:pointer">GOT IT!</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            modal.addEventListener('click',e=>{if(e.target===modal)modal.remove()});
+        }
+        function bookWhatsApp(i){const f=flightsData[i];window.open('https://wa.me/'+CONFIG.WHATSAPP_NUMBER+'?text='+encodeURIComponent('Hello! Book:\\n✈️ '+f.cityFrom+'→'+f.cityTo+'\\n💰 ₦'+f.price.toLocaleString()+'\\n🛫 '+f.airline),'_blank')}
+        
+        function openAlertModal(){document.getElementById('alertModal').classList.add('show')}
+        function closeAlertModal(){document.getElementById('alertModal').classList.remove('show')}
+        function createAlert(){const f=document.getElementById('alert-from').value,t=document.getElementById('alert-to').value,p=document.getElementById('alert-price').value,e=document.getElementById('alert-email').value;if(!f||!t||!p||!e){alert('Fill all fields');return}alert('✅ Alert Created!\\n\\n'+f+' → '+t+'\\nTarget: ₦'+parseInt(p).toLocaleString()+'\\n\\nNotify: '+e);closeAlertModal()}
+        
+        function subscribe(plan){if(plan==='free'){openAlertModal();return}const prices={traveler:500,business:2000};const e=prompt('Enter email:');if(!e)return;PaystackPop.setup({key:CONFIG.PAYSTACK_PUBLIC_KEY,email:e,amount:prices[plan]*100,currency:CONFIG.CURRENCY,ref:'DLSUB-'+Math.random().toString(36).substr(2,9),metadata:{plan:plan},callback:function(r){alert('✅ '+plan.toUpperCase()+' Activated!\\nRef: '+r.reference)},onClose:function(){}}).openIframe()}
+        
+        function toggleAiChat(){document.getElementById('aiChatWindow').classList.toggle('show')}
+        function askAi(q){document.getElementById('aiInput').value=q;sendAiMessage()}
+        function sendAiMessage(){
+            const inp=document.getElementById('aiInput'),msg=inp.value.trim();
+            if(!msg)return;
+            const msgs=document.getElementById('aiChatMessages');
+            
+            // Add user message
+            msgs.innerHTML+=`<div class="ai-message user"><div class="ai-message-avatar">👤</div><div class="ai-message-content">${msg}</div></div>`;
+            inp.value='';
+            
+            // Show typing indicator
+            msgs.innerHTML+=`<div class="ai-typing" id="typ"><span></span><span></span><span></span></div>`;
+            msgs.scrollTop=msgs.scrollHeight;
+            
+            // Check if we have a local answer
+            const localResponse = getAiResponse(msg);
+            const isDefaultResponse = localResponse.includes("Here's what I can help with");
+            
+            if(!isDefaultResponse){
+                // We have a good local answer
+                setTimeout(()=>{
+                    document.getElementById('typ')?.remove();
+                    msgs.innerHTML+=`<div class="ai-message"><div class="ai-message-avatar">🎫</div><div class="ai-message-content">${localResponse}</div></div>`;
+                    msgs.scrollTop=msgs.scrollHeight;
+                },1200);
+            } else {
+                // No local answer - try web search via Claude API
+                searchWebForAnswer(msg, msgs);
+            }
+        }
+        
+        // Web search using Claude API
+        async function searchWebForAnswer(question, msgsContainer){
+            try {
+                const response = await fetch("https://api.anthropic.com/v1/messages", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        model: "claude-sonnet-4-20250514",
+                        max_tokens: 1000,
+                        system: "You are AI Ticket Master, a helpful travel assistant for DomisLink Flights in Lagos, Nigeria. Answer travel questions helpfully and concisely. Format responses with HTML <b> for bold and <br> for line breaks. Focus on: airlines, flights, visas, travel tips, destinations. Keep responses under 300 words. Always be helpful and friendly.",
+                        messages: [
+                            { role: "user", content: question }
+                        ],
+                        tools: [
+                            {
+                                "type": "web_search_20250305",
+                                "name": "web_search"
+                            }
+                        ]
+                    })
+                });
+                
+                const data = await response.json();
+                document.getElementById('typ')?.remove();
+                
+                if(data.content && data.content.length > 0){
+                    // Extract text response
+                    const textContent = data.content
+                        .filter(item => item.type === "text")
+                        .map(item => item.text)
+                        .join("<br><br>");
+                    
+                    if(textContent){
+                        msgsContainer.innerHTML+=`<div class="ai-message"><div class="ai-message-avatar">🎫</div><div class="ai-message-content">🌐 <b>Live Search Result:</b><br><br>${textContent.replace(/\n/g,'<br>')}</div></div>`;
+                    } else {
+                        showFallbackResponse(msgsContainer, question);
+                    }
+                } else {
+                    showFallbackResponse(msgsContainer, question);
+                }
+                msgsContainer.scrollTop=msgsContainer.scrollHeight;
+                
+            } catch(error){
+                console.log('Web search error:', error);
+                document.getElementById('typ')?.remove();
+                showFallbackResponse(msgsContainer, question);
+            }
+        }
+        
+        function showFallbackResponse(msgsContainer, question){
+            const fallbackMsg = `I don't have specific information about "${question}" in my knowledge base.<br><br>
+            <b>Here's how I can help:</b><br><br>
+            📞 <b>WhatsApp our agents</b> - They have real-time info!<br>
+            🔍 <b>Search above</b> - Find live flight prices<br>
+            🌐 <b>Check official sources:</b><br>
+            • Embassy websites for visa info<br>
+            • Airline websites for routes<br>
+            • IATA.org for travel requirements<br><br>
+            💬 <b>Try asking about:</b><br>
+            • Specific countries (Dubai, UK, USA, Japan, etc.)<br>
+            • Visa requirements<br>
+            • Airport procedures<br>
+            • Baggage rules<br>
+            • Flight safety<br><br>
+            How else can I help you?`;
+            
+            msgsContainer.innerHTML+=`<div class="ai-message"><div class="ai-message-avatar">🎫</div><div class="ai-message-content">${fallbackMsg}</div></div>`;
+            msgsContainer.scrollTop=msgsContainer.scrollHeight;
+        }
+        function getAiResponse(m){const l=m.toLowerCase();
+        
+        // TODAY'S DEALS / CHEAPEST PRICES
+        if(l.includes('today')||l.includes('deal')||l.includes('cheapest today')||l.includes('hot deal')||l.includes('offer')||l.includes('promo'))return`🔥 <b>TODAY'S HOTTEST DEALS:</b><br><br>
+        <b>🇳🇬 DOMESTIC FLIGHTS:</b><br>
+        • Lagos→Owerri: <b class="price-flash">₦${LIVE_PRICES.domestic['Lagos-Owerri']?.price?.toLocaleString() || '36,000'}</b> 📉<br>
+        • Lagos→Benin: <b>₦${LIVE_PRICES.domestic['Lagos-Benin']?.price?.toLocaleString() || '33,000'}</b><br>
+        • Lagos→PHC: <b>₦${LIVE_PRICES.domestic['Lagos-PHC']?.price?.toLocaleString() || '38,000'}</b> 📉<br>
+        • Lagos→Abuja: <b>₦${LIVE_PRICES.domestic['Lagos-Abuja']?.price?.toLocaleString() || '42,000'}</b><br><br>
+        <b>🌍 INTERNATIONAL FLIGHTS:</b><br>
+        • Lagos→Accra: <b>₦${LIVE_PRICES.international['Lagos-Accra']?.price?.toLocaleString() || '145,000'}</b><br>
+        • Lagos→Dubai: <b class="price-flash">₦${LIVE_PRICES.international['Lagos-Dubai']?.price?.toLocaleString() || '680,000'}</b> 📉<br>
+        • Lagos→London: <b>₦${LIVE_PRICES.international['Lagos-London']?.price?.toLocaleString() || '820,000'}</b> 📉<br>
+        • Lagos→J'burg: <b>₦${LIVE_PRICES.international['Lagos-Johannesburg']?.price?.toLocaleString() || '420,000'}</b><br><br>
+        ⚡ <b>Updated:</b> ${new Date().toLocaleTimeString()}<br>
+        🔔 Prices change fast - book now or set an alert!<br><br>
+        📉 = Price dropped today!`;
+        
+        // PRICE CHECK FOR SPECIFIC ROUTES
+        if(l.includes('price') && (l.includes('abuja')||l.includes('phc')||l.includes('kano')||l.includes('enugu'))){
+            let route = '';
+            let priceData = null;
+            if(l.includes('abuja')) { route = 'Lagos-Abuja'; priceData = LIVE_PRICES.domestic['Lagos-Abuja']; }
+            else if(l.includes('phc')||l.includes('port harcourt')) { route = 'Lagos-PHC'; priceData = LIVE_PRICES.domestic['Lagos-PHC']; }
+            else if(l.includes('kano')) { route = 'Lagos-Kano'; priceData = LIVE_PRICES.domestic['Lagos-Kano']; }
+            else if(l.includes('enugu')) { route = 'Lagos-Enugu'; priceData = LIVE_PRICES.domestic['Lagos-Enugu']; }
+            
+            if(priceData) {
+                const trend = priceData.trend === 'down' ? '📉 Price dropped!' : priceData.trend === 'up' ? '📈 Price up' : '➡️ Stable';
+                return `💰 <b>${route.replace('-','→')} Current Price:</b><br><br>
+                <span style="font-size:1.5em;color:var(--mars-yellow)">₦${priceData.price.toLocaleString()}</span><br><br>
+                ${trend} (₦${Math.abs(priceData.change).toLocaleString()} change)<br><br>
+                ⏱️ Updated: ${new Date().toLocaleTimeString()}<br><br>
+                💡 Book now or set a price alert!`;
+            }
+        }
+        
+        // REMEMBER FAQ
+        
+        // DATE-BASED FLIGHT SEARCHES
+        if((l.includes('flight')||l.includes('fly')||l.includes('going'))&&(l.includes('january')||l.includes('february')||l.includes('march')||l.includes('april')||l.includes('may')||l.includes('june')||l.includes('july')||l.includes('august')||l.includes('september')||l.includes('october')||l.includes('november')||l.includes('december')||l.includes('tomorrow')||l.includes('next week')||l.includes('next month')||l.includes('monday')||l.includes('tuesday')||l.includes('wednesday')||l.includes('thursday')||l.includes('friday')||l.includes('saturday')||l.includes('sunday'))){
+            let dest='your destination';
+            if(l.includes('dubai'))dest='Dubai';
+            else if(l.includes('london'))dest='London';
+            else if(l.includes('abuja'))dest='Abuja';
+            else if(l.includes('phc')||l.includes('port harcourt'))dest='Port Harcourt';
+            else if(l.includes('accra'))dest='Accra';
+            else if(l.includes('johannesburg')||l.includes('south africa'))dest='Johannesburg';
+            else if(l.includes('new york')||l.includes('usa')||l.includes('america'))dest='New York';
+            else if(l.includes('nairobi')||l.includes('kenya'))dest='Nairobi';
+            else if(l.includes('kano'))dest='Kano';
+            else if(l.includes('enugu'))dest='Enugu';
+            else if(l.includes('japan')||l.includes('tokyo'))dest='Tokyo';
+            else if(l.includes('china')||l.includes('beijing'))dest='Beijing';
+            else if(l.includes('canada')||l.includes('toronto'))dest='Toronto';
+            
+            let dateInfo='your selected date';
+            if(l.includes('tomorrow'))dateInfo='tomorrow';
+            else if(l.includes('next week'))dateInfo='next week';
+            else if(l.includes('next month'))dateInfo='next month';
+            else if(l.includes('january'))dateInfo='January';
+            else if(l.includes('february'))dateInfo='February';
+            else if(l.includes('march'))dateInfo='March';
+            else if(l.includes('april'))dateInfo='April';
+            else if(l.includes('may'))dateInfo='May';
+            else if(l.includes('june'))dateInfo='June';
+            else if(l.includes('july'))dateInfo='July';
+            else if(l.includes('august'))dateInfo='August';
+            else if(l.includes('september'))dateInfo='September';
+            else if(l.includes('october'))dateInfo='October';
+            else if(l.includes('november'))dateInfo='November';
+            else if(l.includes('december'))dateInfo='December';
+            
+            let priceEst='checking...';
+            if(dest==='Dubai')priceEst='₦650,000 - ₦950,000';
+            else if(dest==='London')priceEst='₦780,000 - ₦1,200,000';
+            else if(dest==='Abuja')priceEst='₦42,000 - ₦85,000';
+            else if(dest==='Port Harcourt')priceEst='₦38,000 - ₦75,000';
+            else if(dest==='Accra')priceEst='₦140,000 - ₦250,000';
+            else if(dest==='Johannesburg')priceEst='₦400,000 - ₦650,000';
+            else if(dest==='New York')priceEst='₦1,100,000 - ₦2,000,000';
+            else if(dest==='Nairobi')priceEst='₦280,000 - ₦450,000';
+            else if(dest==='Kano')priceEst='₦48,000 - ₦90,000';
+            else if(dest==='Enugu')priceEst='₦40,000 - ₦78,000';
+            else if(dest==='Tokyo')priceEst='₦1,200,000 - ₦2,000,000';
+            else if(dest==='Beijing')priceEst='₦900,000 - ₦1,500,000';
+            else if(dest==='Toronto')priceEst='₦1,100,000 - ₦1,800,000';
+            
+            return `✈️ <b>Lagos → ${dest} (${dateInfo})</b><br><br>
+            💰 <b>Estimated Price:</b> ${priceEst}<br><br>
+            📅 <b>Booking Tips for ${dateInfo}:</b><br>
+            • Book 2-3 weeks ahead for best prices<br>
+            • Tuesday/Wednesday flights cheapest<br>
+            • Compare multiple airlines<br><br>
+            🔔 <b>Want exact prices?</b><br>
+            1️⃣ Use the search form above, OR<br>
+            2️⃣ WhatsApp us for instant quote<br>
+            3️⃣ Set a price alert for this route!<br><br>
+            💡 <b>Quick tip:</b> ${dateInfo.includes('December') ? 'December is PEAK season - book NOW!' : dateInfo.includes('January')||dateInfo.includes('February') ? 'Great time to travel - lower prices!' : 'Good travel period - moderate prices'}`;
+        }
+        
+        // QUICK PRICE CHECK
+        
+        // CHEAP FLIGHTS & BEST TIME TO BOOK
+        if(l.includes('cheap')||l.includes('best day')||l.includes('save money')||l.includes('budget')||l.includes('affordable'))return'💡 <b>Secrets to Cheap Flights:</b><br><br>📅 <b>Best days to fly:</b> Tuesday & Wednesday<br>🕐 <b>Best time to book:</b><br>• Domestic: 1-3 weeks ahead<br>• International: 6-8 weeks ahead<br>• Peak season: 3-4 months ahead<br><br>💰 <b>Money-saving tips:</b><br>• Be flexible with dates (±3 days)<br>• Use incognito mode when searching<br>• Consider nearby airports<br>• Red-eye flights are 20-40% cheaper<br>• Avoid school holidays<br><br>🔔 Set a price alert and I\'ll notify you when prices drop!';
+        
+        // BOOKING CHANGES & CANCELLATIONS
+        if(l.includes('change')||l.includes('cancel')||l.includes('reschedule')||l.includes('modify')||l.includes('postpone'))return'📋 <b>Changing/Cancelling Your Booking:</b><br><br><b>To modify your flight:</b><br>1️⃣ Find your booking ref (DL-XXXXX)<br>2️⃣ WhatsApp us with new dates<br>3️⃣ We\'ll check availability & fees<br><br>💰 <b>Typical change fees:</b><br>• Air Peace: ₦15,000-₦25,000<br>• Ethiopian: Free within 24hrs<br>• Emirates: $150-$300<br>• British Airways: £50-£150<br><br>⚠️ <b>Important:</b><br>• Changes must be before departure<br>• Fare difference may apply<br>• Name changes usually not allowed<br><br>📞 Need to change now? WhatsApp us!';
+        
+        // BAGGAGE ALLOWANCE
+        if(l.includes('baggage')||l.includes('bag')||l.includes('luggage')||l.includes('carry on')||l.includes('checked'))return'🧳 <b>Baggage Allowances by Class:</b><br><br><b>✈️ Economy Class:</b><br>• Cabin: 7-10kg (1 bag, 55x40x20cm)<br>• Checked: 23kg (1-2 bags)<br><br><b>💼 Business Class:</b><br>• Cabin: 12-14kg (2 bags)<br>• Checked: 32kg (2 bags)<br><br><b>👑 First Class:</b><br>• Cabin: 14kg (2 bags)<br>• Checked: 40kg (3 bags)<br><br>💰 <b>Extra baggage costs:</b><br>• Air Peace: ₦3,000/kg<br>• Emirates: $70-$150/bag<br>• Ethiopian: $50-$100/bag<br><br>📦 <b>Prohibited items:</b><br>Liquids over 100ml, sharp objects, batteries in checked bags<br><br>💡 <b>Tip:</b> Weigh bags at home to avoid airport fees!';
+        
+        // VISA REQUIREMENTS
+        if(l.includes('visa')||l.includes('travel document')||l.includes('entry requirement'))return'🛂 <b>Visa Requirements for Nigerians:</b><br><br>✅ <b>Visa-FREE (just passport):</b><br>• Ghana, Benin, Togo (ECOWAS)<br>• Kenya, Seychelles, Mauritius<br>• Singapore (96hrs transit)<br>• Indonesia (30 days)<br><br>🔄 <b>Visa on Arrival:</b><br>• UAE/Dubai (30 days)<br>• Maldives (30 days)<br>• Cambodia, Rwanda<br>• Turkey (e-Visa online)<br><br>📝 <b>Visa REQUIRED:</b><br>• 🇬🇧 UK - Apply online, 3-6 weeks<br>• 🇺🇸 USA - Embassy interview needed<br>• 🇨🇦 Canada - Online application<br>• 🇪🇺 Schengen/EU - Embassy appointment<br><br>📄 <b>Documents usually needed:</b><br>• Valid passport (6+ months)<br>• Bank statements<br>• Flight booking<br>• Hotel reservation<br>• Invitation letter (if applicable)<br><br>Which country are you traveling to?';
+        
+        // CHECK-IN PROCESS
+        if(l.includes('check in')||l.includes('check-in')||l.includes('boarding'))return'✅ <b>Check-in Guide:</b><br><br>🖥️ <b>Online Check-in:</b><br>• Opens 24-48hrs before flight<br>• Get boarding pass on phone<br>• Choose your seat<br>• Saves time at airport!<br><br>🏢 <b>Airport Check-in:</b><br>• Arrive 3hrs early (international)<br>• Arrive 2hrs early (domestic)<br>• Bring passport + booking ref<br>• Drop checked bags at counter<br><br>📱 <b>Mobile Boarding Pass:</b><br>• Screenshot your pass<br>• Works at most airports<br>• Keep phone charged!<br><br>⚠️ <b>Check-in closes:</b><br>• 45-60 mins before departure<br>• Arrive early to avoid missing flight!';
+        
+        // AIRPORT PROCESS
+        if(l.includes('airport')||l.includes('terminal')||l.includes('security')||l.includes('immigration'))return'🏢 <b>Airport Process Guide:</b><br><br><b>Step 1: Arrival</b><br>• Arrive 3hrs early (international)<br>• Check which terminal online<br><br><b>Step 2: Check-in</b><br>• Show passport & booking<br>• Get boarding pass<br>• Drop checked bags<br><br><b>Step 3: Security</b><br>• Remove laptop, liquids<br>• Belt, shoes in tray<br>• Walk through scanner<br><br><b>Step 4: Immigration</b><br>• Show passport & boarding pass<br>• Answer questions honestly<br>• Get exit stamp<br><br><b>Step 5: Boarding</b><br>• Find your gate<br>• Boarding starts 30-45 mins early<br>• Listen for announcements<br><br>🍽️ <b>Lagos Airport Tips:</b><br>• MMA2 has better facilities<br>• Limited food options airside<br>• Arrive extra early for Int\'l';
+        
+        // REFUNDS
+        if(l.includes('refund')||l.includes('money back')||l.includes('reimburse'))return'💰 <b>Refund Information:</b><br><br>⏰ <b>24-Hour Rule:</b><br>Most airlines offer full refund if cancelled within 24hrs of booking<br><br>📋 <b>Refund eligibility:</b><br>• Refundable tickets: Full refund minus fees<br>• Non-refundable: Credit/voucher only<br>• Flight cancelled by airline: Full refund<br><br>⏱️ <b>Refund timeline:</b><br>• Card payments: 7-14 business days<br>• Bank transfer: 5-10 business days<br>• Paystack: 3-5 business days<br><br>📝 <b>To request refund:</b><br>1. Send booking ref to WhatsApp<br>2. State reason for refund<br>3. We\'ll process with airline<br><br>⚠️ Some taxes are always refundable even on non-refundable tickets!';
+        
+        // FLIGHT DELAYS
+        if(l.includes('delay')||l.includes('late')||l.includes('wait')||l.includes('on time'))return'⏰ <b>Flight Delay Information:</b><br><br>📊 <b>Check flight status:</b><br>• Airline app or website<br>• FlightAware.com<br>• Airport departure boards<br><br>✈️ <b>If flight is delayed:</b><br>• 2+ hours: Airline should provide refreshments<br>• 4+ hours: Meal voucher<br>• Overnight: Hotel + transport<br><br>💰 <b>Compensation (EU flights):</b><br>• 2-3hr delay: €250-€400<br>• 3+hr delay: €400-€600<br>• Cancelled: Full refund or rebooking<br><br>📱 <b>What to do:</b><br>1. Check status regularly<br>2. Keep all receipts<br>3. Ask airline staff for vouchers<br>4. Document everything<br><br>WhatsApp us your booking ref and we\'ll check your flight status!';
+        
+        // CONNECTING FLIGHTS
+        if(l.includes('connect')||l.includes('layover')||l.includes('transit')||l.includes('stopover')||l.includes('transfer'))return'🔄 <b>Connecting Flights Guide:</b><br><br>⏱️ <b>Minimum connection times:</b><br>• Domestic to domestic: 1-1.5 hours<br>• Domestic to international: 2-3 hours<br>• International to international: 2-3 hours<br><br>📋 <b>During layover:</b><br>1. Follow "Transfers" signs<br>2. Go through security again<br>3. Check screens for new gate<br>4. Some airports need transit visa<br><br>🧳 <b>Baggage:</b><br>• Usually transfers automatically<br>• Confirm at check-in<br>• Collect if changing airlines<br><br>⚠️ <b>Missed connection:</b><br>• Same booking: Airline rebooks free<br>• Separate bookings: Your responsibility<br><br>💡 <b>Best layover airports:</b><br>• Dubai (excellent facilities)<br>• Istanbul (hotel deals)<br>• Addis Ababa (Ethiopian hub)<br>• Doha (luxury lounges)';
+        
+        // FIRST TIME FLYER
+        if(l.includes('first time')||l.includes('first flight')||l.includes('never flown')||l.includes('nervous')||l.includes('scared')||l.includes('afraid'))return'🌟 <b>First Time Flying? Don\'t Worry!</b><br><br>📝 <b>Before the flight:</b><br>• Book early for better prices<br>• Choose aisle seat (easy access)<br>• Pack light, check baggage rules<br>• Arrive 3 hours early<br><br>✈️ <b>During the flight:</b><br>• Turbulence is normal & safe<br>• Ears may pop - chew gum/swallow<br>• Stay hydrated (drink water)<br>• Walk around on long flights<br>• Entertainment usually available<br><br>😌 <b>Nervous flyer tips:</b><br>• Choose a window seat to see outside<br>• Deep breathing helps<br>• Flying is safest transport!<br>• Tell crew if anxious - they help<br><br>📱 <b>Don\'t forget:</b><br>• Phone on airplane mode<br>• Keep documents handy<br>• Arrive early, no rushing<br><br>You\'ve got this! ✨';
+        
+        // TRAVEL INSURANCE
+        if(l.includes('insurance')||l.includes('cover')||l.includes('protect')||l.includes('medical'))return'🛡️ <b>Travel Insurance Guide:</b><br><br>✅ <b>What it covers:</b><br>• Medical emergencies abroad<br>• Trip cancellation/interruption<br>• Lost/delayed baggage<br>• Flight delays<br>• Emergency evacuation<br><br>💰 <b>Cost:</b><br>• Basic: ₦5,000-₦15,000/trip<br>• Comprehensive: ₦20,000-₦50,000<br>• Annual: ₦50,000-₦150,000<br><br>⚠️ <b>When it\'s ESSENTIAL:</b><br>• USA trips (medical costs huge!)<br>• Adventure activities<br>• Expensive bookings<br>• Schengen visa requirement<br><br>📋 <b>How to claim:</b><br>1. Keep ALL receipts<br>2. Get police report if theft<br>3. Get medical reports<br>4. Submit within 30 days<br><br>💡 Some credit cards include travel insurance - check yours!';
+        
+        // PASSPORT
+        if(l.includes('passport')||l.includes('travel document')||l.includes('expire')||l.includes('renew'))return'📘 <b>Passport Information:</b><br><br>⚠️ <b>Validity requirement:</b><br>Most countries require 6+ months validity from travel date!<br><br>🇳🇬 <b>Nigerian Passport Renewal:</b><br>• Apply at immigration.gov.ng<br>• 32 pages: ₦25,000<br>• 64 pages: ₦35,000<br>• Processing: 2-6 weeks<br><br>📋 <b>Documents needed:</b><br>• Old passport<br>• NIN slip<br>• Passport photos<br>• Birth certificate<br><br>💡 <b>Tips:</b><br>• Apply 3 months before travel<br>• Keep copies of passport<br>• Email yourself passport photo page<br>• Don\'t laminate bio page<br><br>🆘 <b>Lost passport abroad?</b><br>Contact Nigerian Embassy immediately for emergency travel document';
+        
+        // BOOKING PROCESS
+        if(l.includes('how to book')||l.includes('booking process')||l.includes('make reservation')||l.includes('book flight'))return'📝 <b>How to Book with DomisLink:</b><br><br><b>Step 1: Search</b><br>• Enter your cities & dates<br>• Select passengers & class<br>• Click "Search Flights"<br><br><b>Step 2: Compare</b><br>• Review prices & times<br>• Check layovers<br>• Look for deals<br><br><b>Step 3: Book</b><br>• Click "Book Now"<br>• Enter passenger details (as on passport!)<br>• Pay securely with Paystack<br><br><b>Step 4: Confirmation</b><br>• Receive booking ref: DL-XXXXX<br>• E-ticket sent to email<br>• Save to phone<br><br>💳 <b>Payment options:</b><br>• Card (Visa, Mastercard, Verve)<br>• Bank transfer<br>• USSD<br><br>Need help booking? Just ask!';
+        
+        // TRAVEL TIPS BY DESTINATION
+        if(l.includes('dubai')||l.includes('uae')||l.includes('emirates'))return'🇦🇪 <b>Dubai Travel Guide:</b><br><br>✈️ <b>Flights from Lagos:</b><br>• Direct: Emirates (7 hours)<br>• Via Addis: Ethiopian (cheaper)<br>• Via Doha: Qatar Airways<br><br>🛂 <b>Visa:</b> On arrival (30 days FREE)<br><br>💰 <b>Budget:</b><br>• Hotel: $50-$200/night<br>• Meal: $10-$50<br>• Metro: $1-$3<br><br>🌟 <b>Must-see:</b><br>• Burj Khalifa<br>• Dubai Mall<br>• Desert Safari<br>• Palm Jumeirah<br><br>💡 <b>Tips:</b><br>• Dress modestly<br>• No alcohol in public<br>• Friday is weekend<br>• Bargain at souks!<br><br>Best time: Nov-Mar (cooler)';
+        
+        if(l.includes('london')||l.includes('uk')||l.includes('england')||l.includes('britain'))return'🇬🇧 <b>London Travel Guide:</b><br><br>✈️ <b>Flights from Lagos:</b><br>• Direct: British Airways (6.5hrs)<br>• Via Casablanca: Royal Air Maroc<br>• Via Istanbul: Turkish Airlines<br><br>🛂 <b>Visa:</b> Required - apply online at gov.uk (₦200,000+)<br><br>💰 <b>Budget:</b><br>• Hotel: £80-£200/night<br>• Meal: £10-£30<br>• Oyster card: £5-£15/day<br><br>🌟 <b>Must-see:</b><br>• Big Ben & Parliament<br>• Tower of London<br>• British Museum (FREE)<br>• Camden Market<br><br>💡 <b>Tips:</b><br>• Get Oyster card for transport<br>• Museums are FREE<br>• Tipping not mandatory<br>• Carry umbrella always!<br><br>Best time: Apr-Sep (warmer)';
+        
+        if(l.includes('usa')||l.includes('america')||l.includes('new york')||l.includes('united states'))return'🇺🇸 <b>USA Travel Guide:</b><br><br>✈️ <b>Flights from Lagos:</b><br>• Via Europe: Multiple options<br>• Via Addis: Ethiopian to DC<br>• No direct flights currently<br><br>🛂 <b>Visa:</b> B1/B2 required - Embassy interview (₦80,000 fee)<br><br>💰 <b>Budget:</b><br>• Hotel: $100-$300/night<br>• Meal: $15-$50<br>• Transport varies by city<br><br>⚠️ <b>Visa tips:</b><br>• Strong ties to Nigeria important<br>• Bank statements needed<br>• Be honest in interview<br>• Apply 2-3 months early<br><br>🌟 <b>Popular cities:</b><br>• New York, Los Angeles<br>• Atlanta, Houston, DC<br><br>💡 Get travel insurance - US medical costs are VERY expensive!';
+        
+        // TRAVEL DOCUMENTS CHECKLIST
+        if(l.includes('document')||l.includes('checklist')||l.includes('what to bring')||l.includes('prepare'))return'📋 <b>Travel Documents Checklist:</b><br><br>✅ <b>Essential:</b><br>☐ Passport (6+ months valid)<br>☐ Visa (if required)<br>☐ Flight ticket/e-ticket<br>☐ Hotel booking confirmation<br>☐ Travel insurance<br><br>✅ <b>Recommended:</b><br>☐ Passport copies (2-3)<br>☐ Passport photos (4-6)<br>☐ Bank statements<br>☐ Invitation letter<br>☐ Vaccination card<br><br>✅ <b>COVID (if required):</b><br>☐ Vaccination certificate<br>☐ Test results<br>☐ Health declaration<br><br>📱 <b>Digital copies:</b><br>• Email documents to yourself<br>• Save in cloud storage<br>• Screenshot boarding pass<br><br>💡 Keep originals in carry-on, NEVER in checked bag!';
+        
+        // PACKING TIPS
+        if(l.includes('pack')||l.includes('what to wear')||l.includes('clothes')||l.includes('suitcase'))return'🧳 <b>Packing Tips:</b><br><br>👕 <b>Clothing formula:</b><br>• 1 week trip = 4-5 outfits<br>• Mix & match pieces<br>• Roll clothes (saves space)<br>• Wear bulky items on plane<br><br>✅ <b>Carry-on essentials:</b><br>• Documents & valuables<br>• Phone charger & adapter<br>• Change of clothes<br>• Medications<br>• Snacks<br><br>⚠️ <b>Liquids rule:</b><br>• Max 100ml per container<br>• Clear plastic bag<br>• 1 bag per person<br><br>🔌 <b>Adapters needed:</b><br>• UK: Type G (3 pins)<br>• Europe: Type C (2 round pins)<br>• USA: Type A/B (2 flat pins)<br><br>💡 <b>Pro tip:</b> Take photo of packed bag - helps if luggage lost!';
+        
+        // MONEY & CURRENCY
+        if(l.includes('money')||l.includes('currency')||l.includes('exchange')||l.includes('cash')||l.includes('atm')||l.includes('card'))return'💵 <b>Money & Currency Guide:</b><br><br>💳 <b>Best payment options abroad:</b><br>• Naira card with USD/GBP balance<br>• Travel card (Chipper, Grey)<br>• Small amount of cash<br><br>🏦 <b>Exchange tips:</b><br>• Never change at airport (bad rates)<br>• Use ATMs for local currency<br>• Compare rates before trip<br>• Notify your bank of travel<br><br>💰 <b>How much to carry:</b><br>• 2-3 days expenses in cash<br>• Rest on cards<br>• Emergency USD ($100-$200)<br><br>⚠️ <b>Common scams:</b><br>• "Broken" ATMs<br>• Dynamic currency conversion<br>• Fake exchange bureaus<br><br>💡 <b>Tips:</b><br>• Get domiciliary account<br>• Use Wise/Grey for transfers<br>• Keep money in multiple places';
+        
+        // HEALTH & VACCINATIONS
+        if(l.includes('health')||l.includes('vaccine')||l.includes('vaccination')||l.includes('yellow fever')||l.includes('sick'))return'💉 <b>Health & Vaccination Guide:</b><br><br>🟡 <b>Yellow Fever (REQUIRED):</b><br>• Mandatory for Nigerians<br>• Valid for life<br>• Get at approved centers<br>• Carry original card always!<br><br>💉 <b>Recommended vaccines:</b><br>• Hepatitis A & B<br>• Typhoid<br>• Meningitis<br>• COVID-19<br><br>🩺 <b>Travel health kit:</b><br>• Prescription medications<br>• Painkillers<br>• Anti-diarrhea medicine<br>• First aid basics<br>• Insect repellent<br><br>⚠️ <b>Medication rules:</b><br>• Keep in original packaging<br>• Carry prescription letter<br>• Pack in carry-on<br><br>💡 Check CDC.gov for destination-specific health advice!';
+        
+        // CHILDREN / FAMILY TRAVEL
+        if(l.includes('child')||l.includes('kid')||l.includes('baby')||l.includes('infant')||l.includes('family'))return'👶 <b>Traveling with Children:</b><br><br>🎫 <b>Ticket types:</b><br>• Infant (under 2): 10% adult fare, on lap<br>• Child (2-11): 75% adult fare, own seat<br>• 12+: Adult fare<br><br>📋 <b>Documents needed:</b><br>• Child\'s passport<br>• Birth certificate<br>• Consent letter (if one parent)<br>• Court order (if applicable)<br><br>🧳 <b>Packing for kids:</b><br>• Snacks, snacks, snacks!<br>• Entertainment (tablet, books)<br>• Change of clothes in carry-on<br>• Favorite toy/blanket<br><br>✈️ <b>On the flight:</b><br>• Request bassinet (long flights)<br>• Book bulkhead seats<br>• Feed during takeoff/landing (ears)<br>• Walk the aisle regularly<br><br>💡 Most airlines allow strollers to gate!';
+        
+        // BUSINESS TRAVEL
+        if(l.includes('business')||l.includes('work')||l.includes('corporate')||l.includes('meeting'))return'💼 <b>Business Travel Tips:</b><br><br>✈️ <b>Flight tips:</b><br>• Book business class for long flights<br>• Choose morning arrivals<br>• Join airline loyalty program<br>• Airport lounge access helps<br><br>🏨 <b>Accommodation:</b><br>• Book near meeting venue<br>• Ensure good WiFi<br>• Late checkout if needed<br><br>📋 <b>Documents:</b><br>• Business visa if required<br>• Company invitation letter<br>• Business cards<br>• Presentation backups<br><br>💡 <b>Productivity tips:</b><br>• Use flight time for prep<br>• Download offline docs<br>• Carry universal adapter<br>• Portable charger essential<br><br>🌍 <b>Time zones:</b><br>• Adjust sleep before travel<br>• Schedule important meetings wisely<br>• Stay hydrated!';
+        
+        // GREETINGS
+        if(l.includes('hello')||l.includes('hi ')||l.includes('hey')||l.includes('good morning')||l.includes('good afternoon')||l.includes('good evening'))return'Hello! 👋 Welcome to DomisLink Flights!<br><br>I\'m your AI Ticket Master 🎫<br><br>I can help you with:<br>✈️ Flight searches & bookings<br>💰 Finding cheap flights<br>🛂 Visa requirements<br>🧳 Baggage policies<br>📋 Check-in process<br>🏢 Airport guides<br>💉 Health requirements<br>👶 Family travel<br>💼 Business trips<br>🌍 Destination guides<br><br>What would you like to know?';
+        
+        // THANK YOU
+        if(l.includes('thank')||l.includes('thanks')||l.includes('appreciate'))return'You\'re welcome! 😊<br><br>Happy to help! Is there anything else you\'d like to know about your trip?<br><br>Safe travels! ✈️🌍';
+        
+        // CONTACT / HUMAN
+        if(l.includes('speak to human')||l.includes('real person')||l.includes('agent')||l.includes('customer service')||l.includes('call')||l.includes('contact')||l.includes('whatsapp')||l.includes('telegram'))return'📞 <b>Contact Us - All Platforms:</b><br><br>💬 <b>WHATSAPP (Fastest):</b><br>+234 905 498 4804<br>wa.me/2349054984804<br><br>✈️ <b>TELEGRAM BOT:</b><br>@DomisLinkFlightsBot<br>t.me/DomisLinkFlightsBot<br><br>📘 <b>FACEBOOK:</b><br>fb.me/DomisLinkFlights<br>Messenger available 24/7<br><br>📸 <b>INSTAGRAM:</b><br>@DomisLinkFlights<br>DM for quick response<br><br>🐦 <b>TWITTER/X:</b><br>@DomisLinkNG<br><br>📧 <b>EMAIL:</b><br>flights@domislink.com<br>support@domislink.com<br><br>📍 <b>OFFICE:</b><br>19 Powerline Avenue<br>Meiran, Lagos, Nigeria<br><br>🕐 <b>Hours:</b> 24/7 Online Support<br><br>💡 <b>Pro tip:</b> Telegram bot gives instant price quotes!';
+        
+        // NIGERIAN DOMESTIC DESTINATIONS
+        if(l.includes('abuja')||l.includes('fct')||l.includes('capital'))return'🇳🇬 <b>ABUJA (ABV) - Federal Capital:</b><br><br>✈️ <b>Airlines:</b> Air Peace, Ibom Air, United Nigeria, Azman, Green Africa<br><br>💰 <b>Prices from Lagos:</b><br>• Economy: ₦45,000 - ₦85,000<br>• Business: ₦120,000 - ₦180,000<br><br>⏱️ <b>Flight time:</b> 1 hour<br>📍 <b>Airport:</b> Nnamdi Azikiwe Int\'l (ABV)<br><br>💡 <b>Tips:</b> Book 1-2 weeks ahead, Tue/Wed cheapest!';
+        
+        if(l.includes('port harcourt')||l.includes('phc')||l.includes('rivers'))return'🇳🇬 <b>PORT HARCOURT (PHC) - Garden City:</b><br><br>✈️ <b>Airlines:</b> Air Peace, Ibom Air, United Nigeria, Azman<br><br>💰 <b>Prices from Lagos:</b><br>• Economy: ₦40,000 - ₦75,000<br>• Business: ₦100,000 - ₦150,000<br><br>⏱️ <b>Flight time:</b> 55 minutes<br>📍 <b>Airport:</b> Port Harcourt Int\'l (PHC)<br><br>💡 <b>Tips:</b> Oil & gas hub - book early!';
+        
+        if(l.includes('kano'))return'🇳🇬 <b>KANO (KAN) - Commercial Hub North:</b><br><br>✈️ <b>Airlines:</b> Air Peace, Azman Air, Max Air, United Nigeria<br><br>💰 <b>Prices from Lagos:</b><br>• Economy: ₦50,000 - ₦90,000<br><br>⏱️ <b>Flight time:</b> 1hr 30min<br>📍 <b>Airport:</b> Mallam Aminu Kano Int\'l<br><br>💡 <b>Tips:</b> Azman & Max often cheapest!';
+        
+        if(l.includes('enugu')||l.includes('coal city'))return'🇳🇬 <b>ENUGU (ENU) - Coal City:</b><br><br>✈️ <b>Airlines:</b> Air Peace, United Nigeria, Ibom Air<br><br>💰 <b>Prices:</b> ₦42,000 - ₦78,000<br>⏱️ <b>Flight time:</b> 50 minutes<br><br>💡 Gateway to Southeast!';
+        
+        if(l.includes('calabar')||l.includes('cross river'))return'🇳🇬 <b>CALABAR (CBQ) - Paradise City:</b><br><br>✈️ <b>Airlines:</b> Ibom Air, Air Peace, United Nigeria<br><br>💰 <b>Prices:</b> ₦45,000 - ₦85,000<br>⏱️ <b>Flight time:</b> 1hr 10min<br><br>🎭 <b>Famous for:</b> Calabar Carnival (December)!<br>💡 Book early for carnival season!';
+        
+        if(l.includes('uyo')||l.includes('akwa ibom'))return'🇳🇬 <b>UYO (QUO) - Akwa Ibom:</b><br><br>✈️ <b>Airlines:</b> Ibom Air (state-owned, excellent!), Air Peace<br><br>💰 <b>Prices:</b> ₦40,000 - ₦75,000<br>⏱️ <b>Flight time:</b> 1 hour<br><br>💡 Ibom Air best service on this route!';
+        
+        if(l.includes('owerri')||l.includes('imo'))return'🇳🇬 <b>OWERRI (QOW) - Heartland:</b><br><br>✈️ <b>Airlines:</b> Air Peace, United Nigeria<br><br>💰 <b>Prices:</b> ₦38,000 - ₦70,000<br>⏱️ <b>Flight time:</b> 50 minutes<br><br>💡 Entertainment capital of the East!';
+        
+        if(l.includes('benin')||l.includes('edo'))return'🇳🇬 <b>BENIN CITY (BNI) - Edo State:</b><br><br>✈️ <b>Airlines:</b> Air Peace, United Nigeria<br><br>💰 <b>Prices:</b> ₦35,000 - ₦65,000<br>⏱️ <b>Flight time:</b> 45 minutes<br><br>🏛️ Rich Benin Kingdom history!';
+        
+        if(l.includes('warri')||l.includes('asaba')||l.includes('delta'))return'🇳🇬 <b>WARRI/ASABA - Delta State:</b><br><br>✈️ <b>Airlines:</b> Air Peace, United Nigeria<br><br>💰 <b>Prices:</b> ₦38,000 - ₦72,000<br>⏱️ <b>Flight time:</b> 50 minutes<br><br>💡 Asaba airport newer & better!';
+        
+        if(l.includes('kaduna'))return'🇳🇬 <b>KADUNA (KAD):</b><br><br>✈️ <b>Airlines:</b> Air Peace, Azman, Max Air<br><br>💰 <b>Prices:</b> ₦48,000 - ₦88,000<br>⏱️ <b>Flight time:</b> 1hr 15min<br><br>💡 Sometimes cheaper than Abuja!';
+        
+        if(l.includes('sokoto'))return'🇳🇬 <b>SOKOTO (SKO) - Seat of Caliphate:</b><br><br>✈️ <b>Airlines:</b> Azman Air, Max Air<br><br>💰 <b>Prices:</b> ₦55,000 - ₦95,000<br>⏱️ <b>Flight time:</b> 1hr 45min';
+        
+        if(l.includes('jos')||l.includes('plateau'))return'🇳🇬 <b>JOS - Plateau State:</b><br><br>⚠️ Limited commercial flights<br>💡 <b>Alternative:</b> Fly Abuja + 3hr drive<br><br>🌄 Beautiful cool climate!';
+        
+        if(l.includes('ilorin')||l.includes('kwara'))return'🇳🇬 <b>ILORIN (ILR) - Kwara:</b><br><br>✈️ <b>Airlines:</b> Air Peace (limited)<br><br>💰 <b>Prices:</b> ₦35,000 - ₦60,000<br>⏱️ <b>Flight time:</b> 45 minutes<br><br>💡 Close to Lagos, road also works!';
+        
+        if(l.includes('yola')||l.includes('adamawa'))return'🇳🇬 <b>YOLA - Adamawa:</b><br><br>✈️ <b>Airlines:</b> Air Peace, Azman<br>💰 <b>Prices:</b> ₦55,000 - ₦95,000<br>⏱️ <b>Flight time:</b> 1hr 50min';
+        
+        if(l.includes('maiduguri')||l.includes('borno'))return'🇳🇬 <b>MAIDUGURI - Borno:</b><br><br>✈️ <b>Airlines:</b> Air Peace, Azman<br>💰 <b>Prices:</b> ₦58,000 - ₦100,000<br>⏱️ <b>Flight time:</b> 2 hours<br><br>⚠️ Check security situation';
+        
+        if(l.includes('domestic')||l.includes('local flight')||l.includes('within nigeria')||l.includes('nigeria destination'))return'🇳🇬 <b>Nigerian Domestic Flights:</b><br><br>✈️ <b>TOP AIRLINES:</b><br>⭐ Air Peace - Largest network<br>⭐ Ibom Air - Best punctuality<br>• United Nigeria, Azman, Green Africa, Max Air<br><br>💰 <b>PRICES FROM LAGOS:</b><br>• Abuja: ₦45K-₦85K (1hr)<br>• Port Harcourt: ₦40K-₦75K (55min)<br>• Kano: ₦50K-₦90K (1.5hr)<br>• Enugu: ₦42K-₦78K (50min)<br>• Calabar: ₦45K-₦85K (1hr)<br>• Uyo: ₦40K-₦75K (1hr)<br>• Owerri: ₦38K-₦70K (50min)<br>• Benin: ₦35K-₦65K (45min)<br><br>💡 <b>TIPS:</b><br>• Book 5-14 days ahead<br>• Tue/Wed cheapest<br>• Morning flights cheaper<br>• Ibom Air worth extra ₦5K!<br><br>Which city do you need?';
+        
+        // JAPAN TRAVEL
+        if(l.includes('japan')||l.includes('tokyo')||l.includes('osaka')||l.includes('japanese'))return'🇯🇵 <b>Japan Travel Guide:</b><br><br>✈️ <b>Flights from Lagos:</b><br>• Via Dubai (Emirates): 18-22hrs<br>• Via Doha (Qatar): 18-20hrs<br>• Via Istanbul (Turkish): 20-24hrs<br>• Via Addis (Ethiopian): 20-25hrs<br>• No direct flights<br><br>💰 <b>Typical prices:</b><br>• Economy: ₦1,200,000 - ₦2,000,000<br>• Business: ₦3,500,000 - ₦6,000,000<br><br>🛂 <b>VISA REQUIREMENTS:</b><br>• Nigerians need visa (NOT visa-free)<br>• Apply at Japan Embassy, Lagos<br>• Processing: 5-7 working days<br>• Fee: ~₦10,000<br><br>📋 <b>Documents needed:</b><br>• Valid passport (6+ months)<br>• Completed application form<br>• Passport photos (4.5x4.5cm)<br>• Bank statements (3-6 months)<br>• Employment letter<br>• Flight reservation<br>• Hotel booking<br>• Detailed itinerary<br>• Tax clearance (sometimes)<br><br>💴 <b>Currency:</b> Japanese Yen (¥)<br>• ¥1 = ~₦10-11<br>• ¥10,000 = ~₦100,000-110,000<br><br>🌸 <b>Best time to visit:</b><br>• Cherry blossom: March-April<br>• Autumn leaves: October-November<br>• Avoid: Golden Week (late April-May)<br><br>💡 <b>Tips:</b><br>• JR Pass saves money on trains<br>• Cash is king (many places don\'t take cards)<br>• Learn basic Japanese phrases<br>• Bow when greeting<br><br>Want me to search for more details?';
+        
+        // CHINA TRAVEL
+        if(l.includes('china')||l.includes('beijing')||l.includes('shanghai')||l.includes('chinese'))return'🇨🇳 <b>China Travel Guide:</b><br><br>✈️ <b>Flights from Lagos:</b><br>• Via Dubai/Doha: 16-20hrs<br>• Via Addis Ababa: 18-22hrs<br>• Via Istanbul: 18-24hrs<br><br>💰 <b>Typical prices:</b><br>• Economy: ₦900,000 - ₦1,500,000<br>• Business: ₦2,500,000 - ₦4,500,000<br><br>🛂 <b>VISA REQUIREMENTS:</b><br>• Nigerians need visa<br>• Apply at China Visa Center, Lagos<br>• Processing: 4-7 working days<br>• Fee: ~₦25,000-₦50,000<br><br>📋 <b>Documents:</b><br>• Passport (6+ months, 2 blank pages)<br>• Application form<br>• Photo (specific requirements!)<br>• Bank statements<br>• Flight + hotel bookings<br>• Invitation letter (if visiting someone)<br><br>💴 <b>Currency:</b> Chinese Yuan (¥/CNY)<br>• ¥1 = ~₦220-240<br><br>💡 <b>Tips:</b><br>• Download WeChat before going<br>• VPN needed for Google/WhatsApp<br>• Learn "Ni Hao" (Hello)<br>• Haggle at markets';
+        
+        // AUSTRALIA TRAVEL
+        if(l.includes('australia')||l.includes('sydney')||l.includes('melbourne')||l.includes('australian'))return'🇦🇺 <b>Australia Travel Guide:</b><br><br>✈️ <b>Flights from Lagos:</b><br>• Via Dubai (Emirates): 22-28hrs<br>• Via Doha (Qatar): 24-30hrs<br>• Very long journey - 2 stops common<br><br>💰 <b>Typical prices:</b><br>• Economy: ₦1,500,000 - ₦2,500,000<br>• Business: ₦4,000,000 - ₦8,000,000<br><br>🛂 <b>VISA REQUIREMENTS:</b><br>• Nigerians need visa (strict!)<br>• Apply online: immi.homeaffairs.gov.au<br>• Processing: 2-4 weeks<br>• Fee: AUD $145 (~₦150,000)<br><br>📋 <b>Documents:</b><br>• Valid passport<br>• Bank statements (strong finances needed)<br>• Employment proof<br>• Property documents<br>• Travel history helps<br>• Health insurance required<br><br>💵 <b>Currency:</b> Australian Dollar (AUD)<br>• A$1 = ~₦1,050-1,100<br><br>⚠️ <b>Important:</b><br>• Visa rejection rate high for Nigerians<br>• Show strong ties to Nigeria<br>• Comprehensive travel insurance mandatory';
+        
+        // CANADA TRAVEL
+        if(l.includes('canada')||l.includes('toronto')||l.includes('vancouver')||l.includes('canadian'))return'🇨🇦 <b>Canada Travel Guide:</b><br><br>✈️ <b>Flights from Lagos:</b><br>• Via London (British Airways): 14-18hrs<br>• Via Amsterdam (KLM): 15-19hrs<br>• Via USA (with transit visa): 16-20hrs<br><br>💰 <b>Typical prices:</b><br>• Economy: ₦1,100,000 - ₦1,800,000<br>• Business: ₦3,000,000 - ₦5,500,000<br><br>🛂 <b>VISA REQUIREMENTS:</b><br>• Visitor visa required<br>• Apply online: canada.ca/visa<br>• Biometrics at VAC Lagos<br>• Processing: 2-8 weeks<br>• Fee: CAD $100 (~₦120,000)<br><br>📋 <b>Documents:</b><br>• Passport<br>• Digital photo<br>• Bank statements (3-6 months)<br>• Employment letter<br>• Purpose of travel<br>• Ties to Nigeria proof<br><br>💵 <b>Currency:</b> Canadian Dollar (CAD)<br>• C$1 = ~₦1,150-1,200<br><br>💡 <b>Tips:</b><br>• Apply well in advance<br>• Travel history to US/UK helps<br>• Winter is VERY cold (-20°C!)';
+        
+        // INDIA TRAVEL
+        if(l.includes('india')||l.includes('delhi')||l.includes('mumbai')||l.includes('indian'))return'🇮🇳 <b>India Travel Guide:</b><br><br>✈️ <b>Flights from Lagos:</b><br>• Via Dubai (Emirates): 12-16hrs<br>• Via Addis (Ethiopian): 10-14hrs<br>• Via Doha (Qatar): 12-15hrs<br><br>💰 <b>Typical prices:</b><br>• Economy: ₦500,000 - ₦900,000<br>• Business: ₦1,500,000 - ₦3,000,000<br><br>🛂 <b>VISA REQUIREMENTS:</b><br>• e-Visa available for Nigerians! ✅<br>• Apply online: indianvisaonline.gov.in<br>• Processing: 3-5 days<br>• Fee: $25-$80 (~₦40,000-₦130,000)<br><br>📋 <b>Documents:</b><br>• Passport scan<br>• Photo (specific format)<br>• Return ticket<br>• Hotel booking<br><br>💵 <b>Currency:</b> Indian Rupee (₹)<br>• ₹1 = ~₦19-20<br>• ₹1000 = ~₦19,000-20,000<br><br>💡 <b>Tips:</b><br>• e-Visa makes it easy!<br>• Medical tourism popular<br>• Bargain everywhere<br>• Street food is amazing but be careful';
+        
+        // GERMANY/EUROPE TRAVEL
+        if(l.includes('germany')||l.includes('berlin')||l.includes('frankfurt')||l.includes('schengen')||l.includes('europe')||l.includes('france')||l.includes('italy')||l.includes('spain'))return'🇪🇺 <b>Europe/Schengen Travel Guide:</b><br><br>✈️ <b>Flights from Lagos:</b><br>• Direct to Amsterdam (KLM): 6.5hrs<br>• Direct to Paris (Air France): 6.5hrs<br>• Direct to Frankfurt (Lufthansa): 6.5hrs<br>• Via Istanbul (Turkish): 8-12hrs<br><br>💰 <b>Typical prices:</b><br>• Economy: ₦700,000 - ₦1,200,000<br>• Business: ₦2,000,000 - ₦4,000,000<br><br>🛂 <b>SCHENGEN VISA:</b><br>• Required for all EU countries<br>• Apply at embassy of main destination<br>• Processing: 15-30 days<br>• Fee: €80 (~₦130,000)<br><br>📋 <b>Documents:</b><br>• Passport (3 months beyond stay)<br>• Application form<br>• Photos (35x45mm)<br>• Travel insurance (€30,000 min)<br>• Bank statements<br>• Employment letter<br>• Flight + hotel bookings<br>• Cover letter explaining trip<br><br>💶 <b>Currency:</b> Euro (€)<br>• €1 = ~₦1,680-1,750<br><br>💡 <b>Schengen covers:</b><br>Germany, France, Italy, Spain, Netherlands, Belgium, Austria, Greece, Portugal, etc. (26 countries)';
+        
+        // SINGAPORE TRAVEL
+        if(l.includes('singapore'))return'🇸🇬 <b>Singapore Travel Guide:</b><br><br>✈️ <b>Flights from Lagos:</b><br>• Via Dubai: 16-20hrs<br>• Via Doha: 16-18hrs<br><br>💰 <b>Prices:</b> ₦900,000 - ₦1,600,000<br><br>🛂 <b>VISA:</b><br>• Nigerians need visa<br>• Apply through authorized agents<br>• Processing: 3-5 days<br>• Need local sponsor/hotel<br><br>💵 <b>Currency:</b> SGD<br>• S$1 = ~₦1,180-1,220<br><br>💡 <b>Tips:</b><br>• Very clean, strict laws<br>• No chewing gum!<br>• Amazing food courts';
+        
+        // MALAYSIA TRAVEL
+        if(l.includes('malaysia')||l.includes('kuala lumpur'))return'🇲🇾 <b>Malaysia Travel Guide:</b><br><br>✈️ <b>Flights:</b> Via Dubai/Doha, 14-18hrs<br>💰 <b>Prices:</b> ₦700,000 - ₦1,200,000<br><br>🛂 <b>VISA:</b><br>• Nigerians need visa<br>• Apply at Malaysia High Commission<br>• Processing: 5-7 days<br><br>💵 <b>Currency:</b> Ringgit (MYR)<br>• RM1 = ~₦340-360<br><br>💡 <b>Tips:</b><br>• Halal food everywhere<br>• Very affordable<br>• Great shopping';
+        
+        // THAILAND TRAVEL
+        if(l.includes('thailand')||l.includes('bangkok')||l.includes('thai'))return'🇹🇭 <b>Thailand Travel Guide:</b><br><br>✈️ <b>Flights:</b> Via Dubai/Doha/Addis, 14-20hrs<br>💰 <b>Prices:</b> ₦700,000 - ₦1,300,000<br><br>🛂 <b>VISA:</b><br>• Nigerians need visa<br>• Apply at Thailand Embassy<br>• Tourist visa: 60 days<br>• Processing: 3-5 days<br><br>💵 <b>Currency:</b> Thai Baht (฿)<br>• ฿1 = ~₦45-48<br><br>💡 <b>Tips:</b><br>• Amazing street food<br>• Respect the King<br>• Beautiful temples & beaches';
+        
+        // WEB SEARCH FOR UNKNOWN QUERIES
+        if(l.includes('search')||l.includes('find')||l.includes('look up')||l.includes('google')||l.includes('internet'))return'🔍 <b>Let me search for that!</b><br><br>I\'m searching for the latest information...<br><br>For the most accurate and up-to-date info, I recommend:<br>• 🌐 Check official embassy websites<br>• 📱 Contact us on WhatsApp for live help<br>• 🔔 Our agents have real-time flight info<br><br>What specific information do you need?';
+
+        // PRICE / COST
+        if(l.includes('price')||l.includes('cost')||l.includes('how much')||l.includes('fare'))return'💰 <b>Flight Pricing Guide:</b><br><br>📊 <b>Typical prices from Lagos:</b><br>• Accra: ₦150,000 - ₦250,000<br>• Nairobi: ₦300,000 - ₦450,000<br>• Dubai: ₦600,000 - ₦1,200,000<br>• London: ₦800,000 - ₦1,500,000<br>• USA: ₦1,200,000 - ₦2,500,000<br><br>💡 <b>Price factors:</b><br>• Season (peak vs off-peak)<br>• How far in advance<br>• Day of week<br>• Airline & class<br><br>🔔 <b>Get best prices:</b><br>1. Search flights above<br>2. Set price alerts<br>3. Be flexible with dates<br><br>Want me to search specific routes for you?';
+        
+        // SAFETY PROCEDURES
+        if(l.includes('safe')||l.includes('safety')||l.includes('emergency')||l.includes('crash')||l.includes('turbulence')||l.includes('scared')||l.includes('nervous'))return'🛡️ <b>Flight Safety Guide:</b><br><br>✈️ <b>Flying is VERY safe:</b><br>• Safest mode of transport<br>• 1 in 11 million chance of accident<br>• Heavily regulated globally<br>• Multiple backup systems<br><br>📋 <b>Pre-flight safety:</b><br>• Listen to safety briefing<br>• Locate nearest exit (count rows)<br>• Read safety card in pocket<br>• Know how to use seatbelt<br><br>⚡ <b>During turbulence:</b><br>• Stay calm - it\'s normal!<br>• Keep seatbelt fastened<br>• Secure loose items<br>• Return to seat if standing<br>• Planes are built for turbulence<br><br>😷 <b>Oxygen masks:</b><br>• Put yours on FIRST<br>• Then help children/others<br>• Breathe normally<br><br>🚪 <b>Emergency exits:</b><br>• Usually over wings + front/rear<br>• Leave ALL bags behind<br>• Follow crew instructions<br><br>💡 <b>Comfort tips:</b><br>• Stay hydrated<br>• Move around on long flights<br>• Avoid alcohol (dehydrates)<br><br>You\'re in safe hands! Millions fly safely every day. ✈️';
+        
+        // AIRCRAFT TYPES
+        if(l.includes('aircraft')||l.includes('plane')||l.includes('airplane')||l.includes('boeing')||l.includes('airbus')||l.includes('jet'))return'🛩️ <b>Aircraft Types Guide:</b><br><br><b>COMMON AIRCRAFT:</b><br><br>📍 <b>Short/Medium Haul:</b><br>• <b>Boeing 737:</b> Most popular, 150-190 seats<br>• <b>Airbus A320:</b> Similar size, very safe<br>• <b>Embraer E190:</b> Smaller, regional<br><br>📍 <b>Long Haul:</b><br>• <b>Boeing 777:</b> Wide-body, comfortable<br>• <b>Boeing 787 Dreamliner:</b> Modern, quieter, better air<br>• <b>Airbus A350:</b> Latest tech, great cabin<br>• <b>Airbus A380:</b> Double-decker giant!<br><br><b>LAGOS ROUTES TYPICALLY USE:</b><br>• Nigeria domestic: B737, ATR<br>• Africa regional: B737, A320<br>• Middle East: B777, A350<br>• Europe: B787, A330<br><br>💺 <b>Best seats:</b><br>• Exit row: Extra legroom<br>• Over wing: Stable, less turbulence<br>• Front: Faster exit<br>• Avoid: Last row (seats don\'t recline)<br><br>🔍 Check SeatGuru.com for seat maps!';
+        
+        // ARRIVAL PROCEDURES
+        if(l.includes('arrival')||l.includes('arriving')||l.includes('land')||l.includes('landing')||l.includes('destination')||l.includes('customs')||l.includes('immigration arrival'))return'🛬 <b>Arrival Process Guide:</b><br><br><b>STEP 1: LANDING</b><br>• Stay seated until seatbelt sign off<br>• Collect cabin bags carefully<br>• Follow other passengers<br><br><b>STEP 2: IMMIGRATION</b><br>• Join correct queue:<br>  - Citizens / Residents<br>  - Foreign visitors<br>• Documents ready:<br>  - Passport<br>  - Arrival card (fill on plane)<br>  - Visa (if required)<br>  - Return ticket<br>  - Hotel address<br>• Answer questions honestly<br>• Fingerprints/photo (some countries)<br>• Get entry stamp<br><br><b>STEP 3: BAGGAGE CLAIM</b><br>• Check screens for carousel number<br>• Wait for your bags<br>• Report missing bags IMMEDIATELY<br>• Keep baggage tags until exit<br><br><b>STEP 4: CUSTOMS</b><br>• 🟢 Green = Nothing to declare<br>• 🔴 Red = Goods to declare<br>• Declare: Cash $10,000+, commercial goods<br><br><b>STEP 5: EXIT</b><br>• Exchange money if needed<br>• Get SIM card<br>• Official taxi/Uber only!<br><br>💡 <b>Nigeria arrival tip:</b> Have Yellow Fever card ready!';
+        
+        // CURRENCY EXCHANGE DETAILED
+        if(l.includes('currency')||l.includes('exchange rate')||l.includes('forex')||l.includes('naira')||l.includes('dollar rate')||l.includes('convert'))return'💱 <b>Currency Exchange Guide:</b><br><br><b>CURRENT RATES (Approx):</b><br>🇺🇸 $1 USD = ₦1,500 - ₦1,600<br>🇬🇧 £1 GBP = ₦1,900 - ₦2,000<br>🇪🇺 €1 EUR = ₦1,650 - ₦1,750<br>🇦🇪 1 AED = ₦410 - ₦440<br>🇿🇦 1 ZAR = ₦80 - ₦90<br>🇨🇦 1 CAD = ₦1,100 - ₦1,200<br>🇰🇪 1 KES = ₦11 - ₦13<br>🇬🇭 1 GHS = ₦100 - ₦120<br><br><b>WHERE TO EXCHANGE:</b><br>✅ Banks (safest, ID required)<br>✅ Licensed BDCs<br>✅ Wise/Grey apps (good rates)<br>⚠️ Airport (convenient but costly)<br>❌ Street changers (risky)<br><br><b>BEST PRACTICES:</b><br>• Compare rates before exchange<br>• Keep receipts<br>• Count money before leaving<br>• Use ATMs inside banks<br>• Notify bank of travel<br>• Have backup payment method<br><br><b>TRAVEL MONEY TIPS:</b><br>• Carry mix: Card + Cash + USD<br>• Domiciliary account useful<br>• Get travel card (Chipper, Grey)<br>• Avoid large cash amounts<br><br>💡 Pay in Naira on DomisLink - fair rates!';
+        
+        // AIRLINES DETAILED
+        if(l.includes('airline')||l.includes('which airline')||l.includes('best airline')||l.includes('emirates')||l.includes('qatar')||l.includes('ethiopian')||l.includes('air peace'))return'✈️ <b>Airline Guide:</b><br><br><b>🇳🇬 NIGERIAN AIRLINES:</b><br>• <b>Air Peace:</b> Largest, good service, wide network<br>• <b>Ibom Air:</b> Most punctual, modern fleet<br>• <b>United Nigeria:</b> Growing, competitive<br>• <b>Green Africa:</b> Budget-friendly<br><br><b>⭐ TOP INTERNATIONAL:</b><br>• <b>Emirates:</b> ⭐⭐⭐⭐⭐ Luxury, Dubai hub, great entertainment<br>• <b>Qatar Airways:</b> ⭐⭐⭐⭐⭐ Award-winning service<br>• <b>Ethiopian:</b> ⭐⭐⭐⭐ Best Africa network, value<br>• <b>Turkish:</b> ⭐⭐⭐⭐ Huge network, good food<br>• <b>British Airways:</b> ⭐⭐⭐⭐ Direct London<br>• <b>KLM:</b> ⭐⭐⭐⭐ Reliable, Europe hub<br>• <b>Royal Air Maroc:</b> ⭐⭐⭐ Budget Europe option<br><br><b>LOYALTY PROGRAMS:</b><br>• Emirates Skywards<br>• Qatar Privilege Club<br>• Ethiopian ShebaMiles<br>• Air Peace loyalty<br><br>💡 Join programs - free upgrades & perks!';
+        
+        // PASSPORT INFO
+        if(l.includes('passport')||l.includes('renew')||l.includes('expire')||l.includes('validity'))return'📕 <b>Passport Information:</b><br><br><b>VALIDITY RULES:</b><br>• Most countries need 6+ months validity<br>• Some need 3+ months<br>• Must have 2+ blank pages<br><br><b>NIGERIAN PASSPORT RENEWAL:</b><br>• Apply at immigration.gov.ng<br>• 32 pages: ₦35,000<br>• 64 pages: ₦70,000<br>• Processing: 3-6 weeks<br><br><b>DOCUMENTS NEEDED:</b><br>• Old passport<br>• NIN (National ID)<br>• Birth certificate<br>• Passport photos<br><br><b>EMERGENCY PASSPORT:</b><br>• Contact Nigeria Immigration HQ<br>• Embassy abroad can help<br>• Takes 2-5 days (emergency fee)<br><br>💡 <b>Tips:</b><br>• Renew 6 months before expiry<br>• Keep passport safe always<br>• Make copies & store separately<br>• Never leave in checked baggage';
+        
+        // JET LAG
+        if(l.includes('jet lag')||l.includes('time zone')||l.includes('tired')||l.includes('sleep'))return'😴 <b>Beating Jet Lag:</b><br><br><b>BEFORE FLIGHT:</b><br>• Adjust sleep schedule gradually<br>• Stay well-rested<br>• Avoid alcohol night before<br><br><b>DURING FLIGHT:</b><br>• Set watch to destination time<br>• Sleep if it\'s night there<br>• Stay awake if daytime there<br>• Drink lots of water<br>• Avoid alcohol & caffeine<br>• Walk around regularly<br><br><b>AFTER ARRIVAL:</b><br>• Get sunlight exposure<br>• Stay awake until local bedtime<br>• Light exercise helps<br>• Short naps only (20-30 min)<br>• Eat at local meal times<br><br><b>TIME DIFFERENCES FROM NIGERIA:</b><br>• UK: Same / +1hr (summer)<br>• Dubai: +3 hours<br>• USA East: -5/-6 hours<br>• USA West: -8/-9 hours<br>• South Africa: +1 hour<br><br>💡 Rule: 1 day recovery per timezone crossed';
+        
+        // INSURANCE
+        if(l.includes('insurance')||l.includes('cover')||l.includes('protection'))return'🛡️ <b>Travel Insurance Guide:</b><br><br><b>WHY GET INSURANCE:</b><br>✅ Medical emergencies abroad<br>✅ Trip cancellation<br>✅ Lost/delayed baggage<br>✅ Flight delays<br>✅ Theft or loss<br><br><b>WHAT\'S COVERED:</b><br>• Medical: $50,000 - $1,000,000<br>• Cancellation: Trip cost<br>• Baggage: $1,000 - $3,000<br>• Delay: $100 - $500/day<br><br><b>COSTS:</b><br>• Basic: ₦5,000 - ₦15,000/trip<br>• Comprehensive: ₦20,000 - ₦50,000<br>• Annual: ₦50,000 - ₦150,000<br><br><b>PROVIDERS:</b><br>• AXA Mansard<br>• Leadway Assurance<br>• AIICO Insurance<br>• World Nomads (online)<br><br>⚠️ <b>Important:</b><br>• USA/Canada: MUST have insurance (high medical costs!)<br>• Schengen: Insurance mandatory for visa<br>• Read policy carefully<br>• Keep emergency numbers handy';
+
+        // DEFAULT - COMPREHENSIVE HELP
+        return'I\'m your AI Ticket Master! 🎫<br><br>Here\'s what I can help with:<br><br>✈️ <b>Flights:</b> booking, changes, refunds<br>💰 <b>Prices:</b> cheap flights, best time to book<br>🛂 <b>Visa:</b> requirements by country<br>🧳 <b>Baggage:</b> allowances, fees<br>📋 <b>Check-in:</b> process, timing<br>🏢 <b>Airport:</b> procedures, tips<br>🛬 <b>Arrival:</b> immigration, customs<br>🛡️ <b>Safety:</b> flight safety info<br>🛩️ <b>Aircraft:</b> plane types, seats<br>💱 <b>Currency:</b> exchange rates<br>💉 <b>Health:</b> vaccines, requirements<br>📕 <b>Passport:</b> validity, renewal<br>👶 <b>Family:</b> traveling with kids<br>💼 <b>Business:</b> corporate travel<br>🛡️ <b>Insurance:</b> travel protection<br><br>Just type your question or click a quick button below!';
+        }
+        
+        function toggleMobileMenu(){const n=document.querySelector('nav');n.style.display=n.style.display==='flex'?'none':'flex';if(n.style.display==='flex')n.style.cssText='display:flex;position:absolute;top:100%;left:0;right:0;background:var(--mars-dark);flex-direction:column;padding:1rem;gap:1rem;border-bottom:1px solid var(--mars-border)'}
+        document.querySelectorAll('.modal-overlay').forEach(m=>{m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show')})});
+        
+        // Copy referral code
+        function copyRefCode(){
+            const code = document.getElementById('refCode').textContent;
+            navigator.clipboard.writeText(code).then(()=>{
+                alert('✅ Referral code copied: '+code);
+            });
+        }
+        
+        // PWA Install Prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            showInstallBanner();
+        });
+        
+        function showInstallBanner(){
+            const banner = document.createElement('div');
+            banner.id = 'pwaInstallBanner';
+            banner.innerHTML = `
+                <div style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--mars-card);border:1px solid var(--mars-yellow);border-radius:12px;padding:1rem;display:flex;align-items:center;gap:1rem;z-index:9999;max-width:90%;box-shadow:0 10px 40px rgba(0,0,0,.5)">
+                    <span style="font-size:2rem">📱</span>
+                    <div>
+                        <p style="font-weight:700;font-size:.85rem">Install DomisLink App</p>
+                        <p style="font-size:.7rem;color:var(--mars-text-dim)">Quick access, works offline!</p>
+                    </div>
+                    <button onclick="installPWA()" style="background:var(--mars-yellow);color:var(--mars-dark);border:none;padding:.5rem 1rem;border-radius:6px;font-weight:700;cursor:pointer;font-size:.75rem">Install</button>
+                    <button onclick="this.parentElement.parentElement.remove()" style="background:none;border:none;color:var(--mars-text-dim);cursor:pointer;font-size:1.2rem">×</button>
+                </div>
+            `;
+            document.body.appendChild(banner);
+        }
+        
+        function installPWA(){
+            if(deferredPrompt){
+                deferredPrompt.prompt();
+                def
